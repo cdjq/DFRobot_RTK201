@@ -62,4 +62,6 @@ void setup()
 void loop()
 {
   gnss.getAllGnss();
+  Serial.flush();
+  delay(100);
 }
