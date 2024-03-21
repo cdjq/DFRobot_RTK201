@@ -205,8 +205,14 @@ uint32_t DFRobot_RTK201::baudMatch(Module_Baud baud)
     return 57600;
   }else if(baud == baud_115200){
     return 115200;
+  }else if(baud == baud_230400){
+    return 230400;
+  }else if(baud == baud_512000){
+    return 512000;
+  }else if(baud == baud_921600){
+    return 921600;
   }else{
-    return 9600;
+    return 115200;
   }
 }
 
