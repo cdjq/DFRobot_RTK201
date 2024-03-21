@@ -74,20 +74,23 @@ enum Module_Baud {
   baud_56000 = 6,
   baud_57600 = 7,
   baud_115200 = 8,
+  baud_230400 = 9,
+  baud_512000 = 10,
+  baud_921600 = 11,
 };
 
 
 typedef struct {
-  char  gga[100];
-  char  rmc[100];
-  char  gll[80];
-  char  vtg[50];
-  char  cmd[100];
+  char  gga[120];
+  char  rmc[120];
+  char  gll[100];
+  char  vtg[60];
+  char  cmd[120];
 } sSource_t;
 
 class DFRobot_RTK201{
 public:
-  #define MAX_LEN       1800
+  #define MAX_LEN       3000
   #define REG_YEAR_H 		0
   #define REG_YEAR_L 		1
   #define REG_MONTH 		2
@@ -121,6 +124,8 @@ public:
   #define REG_DIF_X			30
   #define REG_DIFID_H		31
   #define REG_DIFID_L		32
+
+  #define REG_I2C_ID    50     ///< uart device id
   //  32~~~80
   #define REG_GGA_LEN		81
   #define REG_GGA_ALL		82

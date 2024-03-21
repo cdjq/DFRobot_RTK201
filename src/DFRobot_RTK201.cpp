@@ -218,11 +218,10 @@ char * DFRobot_RTK201::transmitAT(const char* cmd)
   uint8_t templen[10] = {0};
   uint8_t oldlen = 0;
   if(strlen(cmd) > 255){
-    return "AT cmd to long";
+    return (char*)("AT cmd to long");
   }
   memcpy(_sendData ,cmd, len);
-  while(len)
-  {
+  while(len){
     if(len > 32){
       writeReg(REG_T_AT_LEN, templen, 1);
       writeReg(REG_TRANS_AT, _sendData, 32);
@@ -245,18 +244,18 @@ char * DFRobot_RTK201::transmitAT(const char* cmd)
     if(len != 0){
       break;
     }
-    if(i >= 9) return "timer out";
+    if(i >= 9) return (char*)("timer out");
   }
 
   while(len){
     if(len > 32){
       writeReg(REG_R_AT_LEN, &oldlen, 1);
-      readReg(REG_RECV_AT, __sourceData.cmd+oldlen, 32);
+      readReg(REG_RECV_AT, (uint8_t *)(__sourceData.cmd+oldlen), 32);
       len -= 32;
       oldlen += 32;
     }else{
       writeReg(REG_R_AT_LEN, &oldlen, 1);
-      readReg(REG_RECV_AT, __sourceData.cmd+oldlen, len);
+      readReg(REG_RECV_AT, (uint8_t *)(__sourceData.cmd+oldlen), len);
       len = 0;
     }
   }
@@ -284,20 +283,18 @@ char * DFRobot_RTK201::getSource(GNSS_Mode mode)
   if(mode == gnGGA){
     if(uartI2CFlag == UART_FLAG) {
       readReg(REG_GGA_LEN, &len, 1);
-      Serial.print("gga len = ");
-      Serial.println(len);
-      readReg(REG_GGA_ALL, __sourceData.gga, len);
+      readReg(REG_GGA_ALL, (uint8_t *)(__sourceData.gga), len);
     }else{
       readReg(REG_GGA_LEN, &len, 1);
       while(len){
         if(len > 32){
           writeReg(REG_GGA_LEN, &i, 1);
-          readReg(REG_GGA_ALL, __sourceData.gga+i, 32);
+          readReg(REG_GGA_ALL, (uint8_t *)(__sourceData.gga+i), 32);
           len -= 32;
           i += 32;
         }else{
           writeReg(REG_GGA_LEN, &i, 1);
-          readReg(REG_GGA_ALL, __sourceData.gga+i, len);
+          readReg(REG_GGA_ALL, (uint8_t *)(__sourceData.gga+i), len);
           len = 0;
         }
       }
@@ -306,20 +303,18 @@ char * DFRobot_RTK201::getSource(GNSS_Mode mode)
   }else if (mode == gnRMC){
     if(uartI2CFlag == UART_FLAG) {
       readReg(REG_RMC_LEN, &len, 1);
-      Serial.print("rmc len = ");
-      Serial.println(len);
-      readReg(REG_RMC_ALL, __sourceData.rmc, len);
+      readReg(REG_RMC_ALL, (uint8_t *)(__sourceData.rmc), len);
     }else{
       readReg(REG_RMC_LEN, &len, 1);
       while(len){
         if(len > 32){
           writeReg(REG_RMC_LEN, &i, 1);
-          readReg(REG_RMC_ALL, __sourceData.rmc+i, 32);
+          readReg(REG_RMC_ALL, (uint8_t *)(__sourceData.rmc+i), 32);
           len -= 32;
           i += 32;
         }else{
           writeReg(REG_RMC_LEN, &i, 1);
-          readReg(REG_RMC_ALL, __sourceData.rmc+i, len);
+          readReg(REG_RMC_ALL, (uint8_t *)(__sourceData.rmc+i), len);
           len = 0;
         }
       }
@@ -328,20 +323,18 @@ char * DFRobot_RTK201::getSource(GNSS_Mode mode)
   }else if (mode == gnGLL){
     if(uartI2CFlag == UART_FLAG) {
       readReg(REG_GLL_LEN, &len, 1);
-      Serial.print("gll len = ");
-      Serial.println(len);
-      readReg(REG_GLL_ALL, __sourceData.gll, len);
+      readReg(REG_GLL_ALL, (uint8_t *)(__sourceData.gll), len);
     }else{
       readReg(REG_GLL_LEN, &len, 1);
       while(len){
         if(len > 32){
           writeReg(REG_GLL_LEN, &i, 1);
-          readReg(REG_GLL_ALL, __sourceData.gll+i, 32);
+          readReg(REG_GLL_ALL, (uint8_t *)(__sourceData.gll+i), 32);
           len -= 32;
           i += 32;
         }else{
           writeReg(REG_GLL_LEN, &i, 1);
-          readReg(REG_GLL_ALL, __sourceData.gll+i, len);
+          readReg(REG_GLL_ALL, (uint8_t *)(__sourceData.gll+i), len);
           len = 0;
         }
       }
@@ -350,20 +343,18 @@ char * DFRobot_RTK201::getSource(GNSS_Mode mode)
   }else{    //(mode == gnVTG){
     if(uartI2CFlag == UART_FLAG) {
       readReg(REG_VTG_LEN, &len, 1);
-      Serial.print("vtg len = ");
-      Serial.println(len);
-      readReg(REG_VTG_ALL, __sourceData.vtg, len);
+      readReg(REG_VTG_ALL, (uint8_t *)(__sourceData.vtg), len);
     }else{
       readReg(REG_VTG_LEN, &len, 1);
       while(len){
         if(len > 32){
           writeReg(REG_VTG_LEN, &i, 1);
-          readReg(REG_VTG_ALL, __sourceData.vtg+i, 32);
+          readReg(REG_VTG_ALL, (uint8_t *)(__sourceData.vtg+i), 32);
           len -= 32;
           i += 32;
         }else{
           writeReg(REG_VTG_LEN, &i, 1);
-          readReg(REG_VTG_ALL, __sourceData.vtg+i, len);
+          readReg(REG_VTG_ALL, (uint8_t *)(__sourceData.vtg+i), len);
           len = 0;
         }
       }
@@ -377,15 +368,15 @@ uint16_t DFRobot_RTK201::getGnssLen(void)
   uint8_t count = 0;
   uint8_t _sendData[10] = {2};
   // enter all data mode
-  delay(100);
   writeReg(REG_ALL_MODE, _sendData, 1);
-  while(1){
-    delay(100);
+  delay(100);
+  while(1){ 
     readReg(REG_ALL_MODE, _sendData, 1);
+    delay(100);
     if(_sendData[0] == 1){
       break;
     }
-    if(count++ > 20){
+    if(count++ > 10){
       return 0;
     }
   }
@@ -402,13 +393,17 @@ void DFRobot_RTK201::getAllGnss(void)
   }
   uint16_t i = 0;
   if(uartI2CFlag == UART_FLAG) {
-    uint8_t templen = len / 250 +1;
+    uint8_t templen = len / 250;
+    if(len % 250 != 0){
+      templen += 1;
+    }
     for(uint16_t i = 0; i < templen; i++){
-      if(i == templen - 1){
+      if(i == (uint16_t)(templen - 1)){
         readReg(REG_ALL, _sendData, len%250);
         if(callback){
           callback((char *)_sendData, (uint8_t)(len%250));
         }
+        return;
       }else{
         readReg(REG_ALL, _sendData, 250);
         if(callback){
@@ -496,19 +491,17 @@ String DFRobot_RTK201::connect(void)
   for(uint8_t i = 0; i < 10; i++)
   {
     readReg(REG_CONNECT_STATE, _sendData, 1);
-    Serial.print("state  = ");
-    Serial.println(_sendData[0]);
     if(_sendData[0] == 0){
       result = "CONNECT SUCCESSFUL";
       return result;
     }
     delay(1000);
     if(i >= 9){
-      result = "TIMER OUT ";
+      result = "TIMER OUT";
       return result;
     }
   }
-  
+  return result;
 }
 
 void DFRobot_RTK201::setCallback(void (*call)(char *, uint8_t))
@@ -525,6 +518,7 @@ DFRobot_RTK201_I2C::DFRobot_RTK201_I2C(TwoWire *pWire, uint8_t addr)
 
 bool DFRobot_RTK201_I2C::begin()
 {
+  _pWire->setClock(400000);
   _pWire->begin();
   _pWire->beginTransmission(_I2C_addr);
   if(_pWire->endTransmission() == 0){
@@ -542,6 +536,7 @@ void DFRobot_RTK201_I2C::writeReg(uint8_t reg, uint8_t *data, uint8_t len)
     _pWire->write(data[i]);
   }
   _pWire->endTransmission();
+  delay(1);
 }
 
 int16_t DFRobot_RTK201_I2C::readReg(uint8_t reg, uint8_t *data, uint8_t len)
@@ -599,6 +594,7 @@ int16_t DFRobot_RTK201_I2C::readReg(uint8_t reg, uint8_t *data, uint8_t len)
 
 bool DFRobot_RTK201_UART::begin()
 {
+  uint8_t _sendData[10] = {0};
   #ifdef ESP32
     _serial->begin(this->_baud, SERIAL_8N1, _txpin, _rxpin);
   #elif defined(ARDUINO_AVR_UNO) || defined(ESP8266)
@@ -606,17 +602,12 @@ bool DFRobot_RTK201_UART::begin()
   #else
     _serial->begin(this->_baud);  // M0 cannot create a begin in a construct
   #endif
-/*
-  uint8_t _sendData[10] = {0};
-  this->readReg (I2C_ID, _sendData, 1);
-  if(_sendData[0] == GNSS_DEVICE_ADDR){
+  this->readReg (REG_I2C_ID, _sendData, 1);
+  if(_sendData[0] == DEVICE_ADDR){
     return true;
   }else{
     return false;
   }
-*/
-  delay(100);
-  return true;
 }
 
 void DFRobot_RTK201_UART::writeReg(uint8_t reg, uint8_t *data, uint8_t len)
@@ -625,7 +616,7 @@ void DFRobot_RTK201_UART::writeReg(uint8_t reg, uint8_t *data, uint8_t len)
   for(uint8_t i = 0; i < len; i++){
     _serial->write(data[i]);
   }
-  delay(10);
+  delay(4);
 }
 
 int16_t DFRobot_RTK201_UART::readReg(uint8_t reg, uint8_t *data, uint8_t len)
@@ -633,13 +624,14 @@ int16_t DFRobot_RTK201_UART::readReg(uint8_t reg, uint8_t *data, uint8_t len)
   uint8_t i = 0;
   _serial->write((uint8_t)reg & 0x7F);
   _serial->write(len);
-
+  delay(4);
   uint32_t nowtime = millis();
   while(millis() - nowtime < TIME_OUT){
+    if(i >= len) return 0;
     while(_serial->available() > 0){
       data[i++] = _serial->read();
     }
-    if(i >= len) return 0;
   }
+  delay(4);
   return 0;
 }

@@ -39,9 +39,26 @@ void setup()
     baud_56000 = 6,
     baud_57600 = 7,
     baud_115200 = 8,
+    baud_230400 = 9,
+    baud_512000 = 10,
+    baud_921600 = 11,
   */
   rtk.setMoudleBaud(baud_115200);
 
+  /**
+    baud_2400 = 0,
+    baud_4800 = 1,
+    baud_9600 = 2,
+    baud_14400 = 3,
+    baud_19200 = 4,
+    baud_38400 = 5,
+    baud_56000 = 6,
+    baud_57600 = 7,
+    baud_115200 = 8,
+    baud_230400 = 9,
+    baud_512000 = 10,
+    baud_921600 = 11,
+  */
   rtk.set4gBaud(baud_115200);
 
   rtk.setLoraBaud(baud_19200);
