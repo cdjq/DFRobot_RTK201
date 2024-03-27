@@ -22,7 +22,7 @@
 
 /**
  * @struct sTim_t
- * @brief Store the time and date information obtained from GPS 
+ * @brief timer information structure
  */
 typedef struct {
   uint16_t year;
@@ -52,19 +52,31 @@ typedef struct {
   double lonitudeDegree;
 }sLonLat_t;
 
-enum GNSS_Mode {
+/**
+ * @struct eGnssData_t
+ * @brief Types of gnss data
+ */
+typedef enum {
   gnGGA,
   gnRMC,
   gnGLL,
   gnVTG,
-};
+}eGnssData_t;
 
-enum Module {
+/**
+ * @enum eModuleMode_t
+ * @brief sensor work mode
+ */
+typedef enum {
   module_4g = 20,
   module_lora = 10,
-};
+}eModuleMode_t;
 
-enum Module_Baud {
+/**
+ * @enum eModuleBaud_t
+ * @brief sensor work baud rate
+ */
+typedef enum  {
   baud_2400 = 0,
   baud_4800 = 1,
   baud_9600 = 2,
@@ -77,9 +89,12 @@ enum Module_Baud {
   baud_230400 = 9,
   baud_512000 = 10,
   baud_921600 = 11,
-};
+}eModuleBaud_t;
 
-
+/**
+ * @enum sSource_t
+ * @brief Data storage buffer
+ */
 typedef struct {
   char  gga[120];
   char  rmc[120];
@@ -164,7 +179,7 @@ public:
 
   #define I2C_FLAG  1
   #define UART_FLAG 2
-  #define TIME_OUT  100            ///< time out
+  #define TIME_OUT  100            ///< uart time out
   #define DEVICE_ADDR 0x20
 
   DFRobot_RTK201();
@@ -224,83 +239,74 @@ public:
 
 /**
  * @fn getAlt
- * @brief Get altitude
+ * @brief Altitude information
  * @return double type, represents altitude 
  */
   double getAlt(void);
 
 /**
  * @fn getSep
- * @brief Get the Sep object
- * 
+ * @brief At the height of geoid
  * @return double 
  */
   double getSep(void);
 
 /**
  * @fn getHdop
- * @brief Get the Hdop object
- * 
+ * @brief Indicates the horizontal accuracy of positioning
  * @return double
  */
   double getHdop(void);
 
 /**
  * @fn getQuality
- * @brief Get the Quality object
- * 
+ * @brief message Quality
  * @return uint8_t 
  */
   uint8_t getQuality(void);
 
 /**
- * @brief Get the Site ID object
- * 
+ * @fn getSiteID
+ * @brief The site id of differential gps data, commonly used for differential gps positioning
  * @return uint16_t
  */
   uint16_t getSiteID(void);
 
-
 /**
- * @brief Get the Dif Time object
- * 
+ * @fn getDifTime
+ * @brief The number of seconds in which a differential signal was last received
  * @return double 
  */
   double getDifTime(void);
 
-  void setModule(Module mode);
+/**
+ * @fn setModule
+ * @brief Set the Module
+ * @param mode 4G or lora
+ */
+  void setModule(eModuleMode_t mode);
 
-  Module getModule(void);
-
+/**
+ * @fn getModule
+ * @brief Get the Module run mode
+ * @return eModuleMode_t 
+ */
+  eModuleMode_t getModule(void);
 
   /**
-   * @brief transmitAT
-   * 
-   * @return char *
+   * @fn transmitAT
+   * @brief Interface for transparent transmission of gnss commands
+   * @return char * return commands
    */
   char * transmitAT(const char* cmd);
 
 /**
- * @brief Get the Source object
- * 
- * @param mode 
+ * @fn getGnssMessage
+ * @brief Get different types of gps data
+ * @param mode eGnssData_t type
  * @return char* 
  */
-  char * getSource(GNSS_Mode mode);
-
-/**
- * @fn getSog
- * @brief Get speed over ground 
- * @return speed Float data(unit: knot)
- */
-  double getSog(void);
-
-/**
- * @fn getCog
- * @brief Get course over ground
- * @return Float data(unit: degree) 
- */
-  double getCog(void);
+  char * getGnssMessage(eGnssData_t mode);
 
 /**
  * @fn getAllGnss
@@ -310,93 +316,91 @@ public:
   void getAllGnss(void);
 
 /**
- * @brief Set the Moudle Baud object
- * 
- * @param baud 
+ * @fn setModuleBaud
+ * @brief Set the Module Baud rate
+ * @param baud eModuleBaud_t
  */
-  void setMoudleBaud(Module_Baud baud);
+  void setModuleBaud(eModuleBaud_t baud);
 
 /**
- * @brief Set the 4g  Baud object
- * 
- * @param baud 
+ * @fn set4gBaud
+ * @brief Set the receive 4g Baud rate
+ * @param baud eModuleBaud_t
  */
-  void set4gBaud(Module_Baud baud);
+  void set4gBaud(eModuleBaud_t baud);
 
 /**
- * @brief Set the Lora Baud object
- * 
+ * @fn setLoraBaud
+ * @brief Set the recevie Lora Baud rate
  * @param baud 
  */
-  void setLoraBaud(Module_Baud baud);
+  void setLoraBaud(eModuleBaud_t baud);
 
 /**
- * @brief Get the Moudle Baud object
- * 
+ * @fn getModuleBaud
+ * @brief Get the Module Baud rate
  * @return uint32_t 
  */
-  uint32_t getMoudleBaud(void);
+  uint32_t getModuleBaud(void);
 
 /**
- * @brief Get the Lora Baud object
- * 
+ * @fn getModuleBaud
+ * @brief Get the Lora Baud rate
  * @return uint32_t 
  */
   uint32_t getLoraBaud(void);
+
 /**
- * @brief 
- * 
+ * @fn get4gBaud
+ * @brief Get the 4G Baud rate
+ * @return uint32_t 
  */
   uint32_t get4gBaud(void);
 
 /**
- * @brief 
- * 
- * @param baud 
- * @return uint32_t 
- */
-  uint32_t baudMatch(Module_Baud baud);
-
-/**
- * @brief Set the User Name object
- * 
+ * @fn setUserName
+ * @brief Set the 4G User Name
  * @param name 
  * @param len 
  */
   void setUserName(const char *name, uint8_t len);
 
 /**
- * @brief Set the User Password object
- * 
+ * @fn setUserName
+ * @brief Set the 4G User Password
  * @param password 
  * @param len 
  */
   void setUserPassword(const char *password, uint8_t len);
 
-/**
- * @brief Set the Server Addr object
- * 
+/** 
+ * @fn setServerAddr
+ * @brief Set the Server Addr
  * @param addr 
  * @param len 
  */
   void setServerAddr(const char *addr, uint8_t len);
 
 /**
- * @brief setMountPoint
- * 
+ * @fn setServerAddr
+ * @brief set Mount Point
  * @param point 
  * @param len 
  */
   void setMountPoint(const char *point, uint8_t len);
 
 /**
- * @brief Set the Port object
- * 
+ * @fn setPort
+ * @brief Set the Port
  * @param port 
  */
   void setPort(uint16_t port);
 
-
+/**
+ * @fn connect
+ * @brief connect 
+ * @return String connect state
+ */
   String connect(void);
 
 /**
@@ -407,12 +411,12 @@ public:
  */
   void setCallback(void (*call)(char *, uint8_t));
 
-
   void (* callback)(char *data, uint8_t len);
 private:
   uint8_t  _addr;
   uint8_t  _M_Flag = 0;
   sSource_t __sourceData;
+  uint32_t baudMatch(eModuleBaud_t baud);
 /**
  * @fn getGnssLen
  * @brief Get length of gnss data 

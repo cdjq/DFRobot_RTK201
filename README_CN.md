@@ -1,15 +1,15 @@
 # DFRobot_RTK201
 - [English Version](./README.md)
+这款RTK高精度定位套件采用基站、移动站搭配的方式，实现空旷地带一定范围内厘米级定位，通过将基站获取到的校准数据经过Lora模块以RTCM格式透明传输至移动站模块，移动站模块通过校准运算实现厘米级定位输出。套件由两个Lora模块，一个移动站模块，一个基站模块，两个支持L1+L5频段的GNSS天线组成。
+移动站采用移远的LC29HDA模块，该模块是一款双频段、多星座的GNSS模块，支持同时接收GNSS，GPS, GLONASS, Galileo, BDS and QZSS卫星，同时跟踪GPS L1 C/A, GLONASS L1, Galileo E1, BDS B1I, QZSS L1 C/A, GPS L5, GalileoE5a, BDS B2a and QZSS L5频带，能快速获取经纬度、时间、高度等数据。可见的卫星数相比于普通的GPS大大增加，同时结合基站模块，接收差分数据后，在空旷地带能实现厘米级别定位。
+基站采用移远的LC29HBS模块，该是一款双频段、多星座GNSS模块，支持同时接收GNSSGPS, GLONASS, Galileo, BDS and QZSS卫星，同时跟踪GPS L1 C/A, GLONASS L1, Galileo E1, BDS B1I, QZSS L1 C/A, GPS L5, GalileoE5a, BDS B2a and QZSS L5频带，提供了快速和准确的采集，提供校正数据。
+套件移动端支持I2C/UART输出，可兼容Arduino、ESP32、树莓派等主控设备。作为入门级的模块，使用简单，没有复杂的接线和数据链的搭建，可用于RTK入门学习，定位循迹小车，物品追踪，高精度控制等。
 
-这是一款支持多卫星系统，可多系统联合定位和单系统独立定位的GNSS定位模块。能快速获取经纬度、时间、高度等数据。多系统联合定位相比于传统单一的GPS定位，可见和可用卫星数目大幅增加，能够提高定位精度和定位速度，即使是在复杂城市环境中也能实现稳定的高精度定位。
+![正反面svg效果图](/resources/images/xxx.jpg) 
 
-Gravity: GNSS定位模块，具有I2C和UART两种数据输出类型，兼容Arduino、ESP32、树莓派等主流的主控设备。可用于车载导航、手持定位、物品追踪、气象站等室外定位场景。
+## 产品链接(https://www.dfrobot.com.cn)
 
-![正反面svg效果图](/resources/images/TEL0157.jpg) 
-
-## 产品链接(https://www.dfrobot.com.cn/goods-3652.html)
-
-    SKU：TEL0157
+    SKU：TEL0171
 
 ## 目录
 
@@ -22,9 +22,10 @@ Gravity: GNSS定位模块，具有I2C和UART两种数据输出类型，兼容Ard
 
 ## 概述
 
-提供一个Arduino库给GNSS模块，此库具有以下功能：
+提供一个Arduino库给RTK模块，此库具有以下功能：
   获取 gnss的数据
   获取 gnss的原始数据
+  配置 模块
 
 ## 库安装
 这里提供两种使用本库的方法：<br>
@@ -93,61 +94,39 @@ Gravity: GNSS定位模块，具有I2C和UART两种数据输出类型，兼容Ard
   double getAlt(void);
 
 /**
- * @fn getSog
- * @brief 获取对地速度
- * @return speed 浮点型数据 （单位 节）
+ * @fn getSep
+ * @brief 获取相对水平面的高度
+ * @return double 
  */
-  double getSog(void);
+  double getSep(void);
 
 /**
- * @fn getCog
- * @brief 获取对地真航向
- * @return 浮点型数据 （单位 度）
+ * @fn getHdop
+ * @brief 获取水平精度因子，表示水平定位精度
+ * @return double
  */
-  double getCog(void);
+  double getHdop(void);
 
 /**
- * @fn setGnss
- * @brief 设置星系
- * @param mode
- * @n   eGPS              使用 gps
- * @n   eBeiDou           使用 beidou
- * @n   eGPS_BeiDou       使用 gps + beidou
- * @n   eGLONASS          使用 glonass
- * @n   eGPS_GLONASS      使用 gps + glonass
- * @n   eBeiDou_GLONASS   使用 beidou +glonass
- * @n   eGPS_BeiDou_GLONASS 使用 gps + beidou + glonass
- * @return NULL
+ * @fn getQuality
+ * @brief 获取消息的质量
+ * @return uint8_t 
  */
-  void setGnss(eGnssMode_t mode);
+  uint8_t getQuality(void);
 
 /**
- * @fn getGnssMode
- * @brief 获取使用的星系模式
- * @return mode
- * @retval 1 使用 gps
- * @retval 2 使用 beidou
- * @retval 3 使用 gps + beidou
- * @retval 4 使用 glonass
- * @retval 5 使用 gps + glonass
- * @retval 6 使用 beidou +glonass
- * @retval 7 使用 gps + beidou + glonass
+ * @fn getSiteID
+ * @brief 差分gps数据的站点id，通常用于差分gps定位
+ * @return uint16_t
  */
-  uint8_t getGnssMode(void);
+  uint16_t getSiteID(void);
 
 /**
- * @fn getAllGnss
- * @brief 获取gnss的数据,回调接收
- * @return null
+ * @fn getDifTime
+ * @brief 最后一次接收差分信号的秒数
+ * @return double 
  */
-  void getAllGnss(void);
-
-/**
- * @fn enablePower
- * @brief 使能gnss的电源
- * @return null
- */
-void enablePower(void);
+  double getDifTime(void);
 
 /**
  * @fn disablePower
@@ -157,18 +136,127 @@ void enablePower(void);
 void disablePower(void);
 
 /**
- * @fn setRgbOn
- * @brief 开启 rgb 灯
- * @return null
+ * @fn setModule
+ * @brief 设置模块运行的模式
+ * @param mode 4G or lora
  */
-void setRgbOn(void);
+  void setModule(eModuleMode_t mode);
 
 /**
- * @fn setRgbOn
- * @brief 关闭 rgb 灯
- * @return null
+ * @fn getModule
+ * @brief 获取模块运行的模式
+ * @return eModuleMode_t 
  */
-void setRgbOff(void);
+  eModuleMode_t getModule(void);
+
+/**
+ * @fn transmitAT
+ * @brief 透传给gnss的命令接口
+ * @return char * 返回gnss 返回的数据
+ */
+char * transmitAT(const char* cmd);
+
+/**
+ * @fn getGnssMessage
+ * @brief 获取不同类型的gnss数据
+ * @param mode 想要的数据类型
+ * @return char* 
+ */
+  char * getGnssMessage(eGnssData_t mode);
+
+/**
+ * @fn getAllGnss
+ * @brief 获取所有的gnss数据，使用回调接收
+ */
+  void getAllGnss(void);
+
+/**
+ * @fn setModuleBaud
+ * @brief 设置模块运行的波特率
+ * @param baud eModuleBaud_t
+ */
+  void setModuleBaud(eModuleBaud_t baud);
+
+/**
+ * @fn set4gBaud
+ * @brief 设置接收4g模块的波特率
+ * @param baud eModuleBaud_t
+ */
+  void set4gBaud(eModuleBaud_t baud);
+
+/**
+ * @fn setLoraBaud
+ * @brief 设置接收lora模块的波特率
+ * @param baud 
+ */
+  void setLoraBaud(eModuleBaud_t baud);
+
+/**
+ * @fn getModuleBaud
+ * @brief 获取模块的波特率
+ * @return uint32_t 
+ */
+  uint32_t getModuleBaud(void);
+
+/**
+ * @fn getModuleBaud
+ * @brief 获取 接收lora的波特率
+ * @return uint32_t 
+ */
+  uint32_t getLoraBaud(void);
+
+/**
+ * @fn get4gBaud
+ * @brief 获取4g模块的波特率
+ * @return uint32_t 
+ */
+  uint32_t get4gBaud(void);
+
+/**
+ * @fn setUserName
+ * @brief 设置用户名
+ * @param name 
+ * @param len 
+ */
+  void setUserName(const char *name, uint8_t len);
+
+/**
+ * @fn setUserName
+ * @brief 设置密码
+ * @param password 
+ * @param len 
+ */
+  void setUserPassword(const char *password, uint8_t len);
+
+/** 
+ * @fn setServerAddr
+ * @brief 设置服务器地址
+ * @param addr 
+ * @param len 
+ */
+  void setServerAddr(const char *addr, uint8_t len);
+
+/**
+ * @fn setServerAddr
+ * @brief 设置挂载点
+ * @param point 
+ * @param len 
+ */
+  void setMountPoint(const char *point, uint8_t len);
+
+/**
+ * @fn setPort
+ * @brief 设置端口号
+ * @param port 
+ */
+  void setPort(uint16_t port);
+
+/**
+ * @fn connect
+ * @brief 连接服务器
+ * @return String 连接的状态
+ */
+  String connect(void);
 
 /**
  * @fn setCallback
@@ -193,9 +281,8 @@ Micro:bit          |      √       | nonsupport uart |             |
 
 
 ## 历史
-- 2022/8/15 - V0.0.1 版本
-- 2022/10/26 - V1.0.0 版本
+- 2023/3/27 - V0.1.0 版本
 
 ## 创作者
 
-Written by ZhixinLiu(zhixin.liu@dfrobot.com), 2022. (Welcome to our website)
+Written by ZhixinLiu(zhixin.liu@dfrobot.com), 2024. (Welcome to our website)

@@ -1,16 +1,16 @@
 # DFRobot_RTK201
 - [中文版](./README_CN.md)
+This RTK high-precision positioning kit uses the combination of base station and mobile station to achieve centimeter-level positioning within a certain range of open areas. The calibration data obtained by the base station is transparently transmitted to the mobile station module in RTCM format through the Lora module, and the mobile station module realizes centimeter-level positioning output through calibration operations. The kit consists of two Lora modules, a mobile station module, a base station module, and two GNSS antennas supporting the L1+L5 band.
+The mobile station adopts the remote LC29HDA module, which is a dual-band, multi-constellation GNSS module, supporting the simultaneous reception of GNSS, GPS, GLONASS, Galileo, BDS and QZSS satellites. Also tracking GPS L1 C/A, GLONASS L1, Galileo E1, BDS B1I, QZSS L1 C/A, GPS L5, GalileoE5a, BDS B2a and QZSS L5 bands, Can quickly obtain longitude and latitude, time, altitude and other data. The number of visible satellites is greatly increased compared with ordinary GPS, and combined with the base station module, after receiving differential data, centimeter-level positioning can be achieved in open areas.
+The base station adopts the remote LC29HBS module, which is a dual-band, multi-constellation GNSS module, supporting the simultaneous reception of GNSSGPS, GLONASS, Galileo, BDS and QZSS satellites. Simultaneous tracking of GPS L1 C/A, GLONASS L1, Galileo E1, BDS B1I, QZSS L1 C/A, GPS L5, GalileoE5a, BDS B2a and QZSS L5 bands provides fast and accurate acquisition, Provide correction data.
+The mobile end of the kit supports I2C/UART output, and is compatible with Arduino, ESP32, Raspberry PI and other main control devices. As an entry-level module, it is simple to use, without complex wiring and data link construction, and can be used for RTK entry learning, positioning tracking car, item tracking, high-precision control, etc.
 
-Global Navigation Satellite Systems (GNSS) provide critical timing and positioning functions for device operations.
-This Gravity: GNSS positioning module from DFRobot supports both single and multiple systems positioning. It is capable of quick delivery of position data like longitude, latitude, altitude and time. Compared with traditional single GPS positioning, the multi-system combination embraces higher precision and faster speed thanks to the increased number of visible and available satellites, which ensures stable and accurate performance even in complex urban environments.
 
-With I2C and UART data outputs, the GNSS positioning module works well with main-controllers like Arduino, ESP32, and Raspberry Pi. It is applicable to outdoor positioning scenarios such as vehicle navigation, handheld positioning tracker, item tracking and weather station.
+![效果图](resources/images/xxx.jpg)
 
-![效果图](resources/images/TEL0157.jpg)
+## Product Link(https://www.dfrobot.com)
 
-## Product Link(https://www.dfrobot.com/product-2651.html)
-
-    SKU：TEL0157
+    SKU：TEL0171
 
 ## Table of Contents
 
@@ -23,9 +23,10 @@ With I2C and UART data outputs, the GNSS positioning module works well with main
 
 ## Summary
 
-Provide an Arduino library for the GNSS module with the following features:
+Provide an Arduino library for the RTK module with the following features:
 Retrieval of GNSS data
 Retrieval of raw GNSS data.
+Config module parameter
 
 ## Installation
 There are two methods for using this library:<br>
@@ -37,149 +38,227 @@ There are two methods for using this library:<br>
 ```C++
 /**
  * @fn getUTC
- * @brief Get utc standard time
- * @return sTim_t type, represents the returned hour, minute and second
- * @retval sTim_t.hour hour
- * @retval sTim_t.minute minute
- * @retval sTim_t.second second
+ * @brief Get UTC, standard time 
+ * @return sTim_t type, represents the returned hour, minute and second 
+ * @retval sTim_t.hour hour 
+ * @retval sTim_t.minute minute 
+ * @retval sTim_t.second second 
  */
   sTim_t getUTC(void);
 
 /**
  * @fn getDate
- * @brief Get the date like year, month and day
- * @return sTim_t type, represents the returned year, month and day
+ * @brief Get date information, year, month, day 
+ * @return sTim_t type, represents the returned year, month, day 
  * @retval sTim_t.year year
- * @retval sTim_t.month month
- * @retval sTim_t.day day
+ * @retval sTim_t.month month 
+ * @retval sTim_t.day day 
  */
   sTim_t getDate(void);
 
 /**
  * @fn getLat
- * @brief Get latitude
- * @return sLonLat_t Type, represents the returned latitude 
+ * @brief Get latitude 
+ * @return sLonLat_t type, represents the returned latitude  
  * @retval sLonLat_t.latDD   Latitude degree(0-90)
- * @retval sLonLat_t.latMM   Latitude  The first and second digits behind the decimal point 
+ * @retval sLonLat_t.latMM   The first and second digits behind the decimal point 
  * @retval sLonLat_t.latMMMMM Latitude  The third and seventh digits behind the decimal point 
- * @retval sLonLat_t.latitude  Latitude value with 7 decimal digits 
- * @retval sLonLat_t.latDirection Direction of latitude 
+ * @retval sLonLat_t.latitude Latitude value with 7 decimal digits
+ * @retval sLonLat_t.latDirection Direction of latitude
  */
   sLonLat_t getLat(void);
 
 /**
  * @fn getLon
  * @brief Get longitude 
- * @return sLonLat_t Type, represents the returned longitude 
+ * @return sLonLat_t Type, represents the returned longitude
  * @retval sLonLat_t.lonDDD  Longitude degree(0-90)
- * @retval sLonLat_t.lonMM   Longitude  The first and second digits behind the decimal point 
- * @retval sLonLat_t.lonMMMMM Longitude The third and seventh digits behind the decimal point 
- * @retval sLonLat_t.lonitude Longitude value with 7 decimal digits 
+ * @retval sLonLat_t.lonMM   Longitude  The first and second digits behind the decimal point
+ * @retval sLonLat_t.lonMMMMM Longitude The third and seventh digits behind the decimal point
+ * @retval sLonLat_t.lonitude Longitude value with 7 decimal digits
  * @retval sLonLat_t.lonDirection Direction of longitude 
  */
   sLonLat_t getLon(void);
 
 /**
  * @fn getNumSatUsed
- * @brief Get the number of the used satellite used 
+ * @brief Get the number of the used satellite used
  * @return uint8_t type, represents the number of the used satellite
  */
   uint8_t getNumSatUsed(void);
 
 /**
  * @fn getAlt
- * @brief Get altitude 
+ * @brief Altitude information
  * @return double type, represents altitude 
  */
   double getAlt(void);
 
 /**
- * @fn getSog
- * @brief Get speed over ground 
- * @return speed Float data(unit: knot)
+ * @fn getSep
+ * @brief At the height of geoid
+ * @return double 
  */
-  double getSog(void);
+  double getSep(void);
 
 /**
- * @fn getCog
- * @brief Get course over ground 
- * @return Float data(unit: degree) 
+ * @fn getHdop
+ * @brief Indicates the horizontal accuracy of positioning
+ * @return double
  */
-  double getCog(void);
+  double getHdop(void);
 
 /**
- * @fn setGnss
- * @brief Set GNSS to be used
- * @param mode
- * @n   eGPS              use gps
- * @n   eBeiDou           use beidou
- * @n   eGPS_BeiDou       use gps + beidou
- * @n   eGLONASS          use glonass
- * @n   eGPS_GLONASS      use gps + glonass
- * @n   eBeiDou_GLONASS   use beidou +glonass
- * @n   eGPS_BeiDou_GLONASS use gps + beidou + glonass
- * @return NULL
+ * @fn getQuality
+ * @brief message Quality
+ * @return uint8_t 
  */
-  void setGnss(eGnssMode_t mode);
+  uint8_t getQuality(void);
 
 /**
- * @fn getGnssMode
- * @brief Get the used gnss mode
- * @return mode
- * @retval 1  gps
- * @retval 2  beidou
- * @retval 3  gps + beidou
- * @retval 4  glonass
- * @retval 5  gps + glonass
- * @retval 6  beidou +glonass
- * @retval 7  gps + beidou + glonass
+ * @fn getSiteID
+ * @brief The site id of differential gps data, commonly used for differential gps positioning
+ * @return uint16_t
  */
-  uint8_t getGnssMode(void);
+  uint16_t getSiteID(void);
+
+/**
+ * @fn getDifTime
+ * @brief The number of seconds in which a differential signal was last received
+ * @return double 
+ */
+  double getDifTime(void);
+
+/**
+ * @fn setModule
+ * @brief Set the Module
+ * @param mode 4G or lora
+ */
+  void setModule(eModuleMode_t mode);
+
+/**
+ * @fn getModule
+ * @brief Get the Module run mode
+ * @return eModuleMode_t 
+ */
+  eModuleMode_t getModule(void);
+
+/**
+ * @fn transmitAT
+ * @brief Interface for transparent transmission of gnss commands
+ * @return char * return commands
+ */
+char * transmitAT(const char* cmd);
+
+/**
+ * @fn getGnssMessage
+ * @brief Get different types of gps data
+ * @param mode eGnssData_t type
+ * @return char* 
+ */
+  char * getGnssMessage(eGnssData_t mode);
 
 /**
  * @fn getAllGnss
- * @brief Get GNSS data, call back and receive 
- * @return null
+ * @brief Get GNSS data, call back and receive
  */
   void getAllGnss(void);
 
 /**
- * @fn enablePower
- * @brief Enable gnss power
- * @return null
+ * @fn setModuleBaud
+ * @brief Set the Module Baud rate
+ * @param baud eModuleBaud_t
  */
-void enablePower(void);
+  void setModuleBaud(eModuleBaud_t baud);
 
 /**
- * @fn disablePower
- * @brief Disable gnss power
- * @return null
+ * @fn set4gBaud
+ * @brief Set the receive 4g Baud rate
+ * @param baud eModuleBaud_t
  */
-void disablePower(void);
-
-
-/**
- * @fn setRgbOn
- * @brief Turn rgb on 
- * @return null
- */
-void setRgbOn(void);
+  void set4gBaud(eModuleBaud_t baud);
 
 /**
- * @fn setRgbOn
- * @brief Turn rgb off
- * @return null
+ * @fn setLoraBaud
+ * @brief Set the recevie Lora Baud rate
+ * @param baud 
  */
-void setRgbOff(void);
+  void setLoraBaud(eModuleBaud_t baud);
+
+/**
+ * @fn getModuleBaud
+ * @brief Get the Module Baud rate
+ * @return uint32_t 
+ */
+  uint32_t getModuleBaud(void);
+
+/**
+ * @fn getModuleBaud
+ * @brief Get the Lora Baud rate
+ * @return uint32_t 
+ */
+  uint32_t getLoraBaud(void);
+
+/**
+ * @fn get4gBaud
+ * @brief Get the 4G Baud rate
+ * @return uint32_t 
+ */
+  uint32_t get4gBaud(void);
+
+/**
+ * @fn setUserName
+ * @brief Set the 4G User Name
+ * @param name 
+ * @param len 
+ */
+  void setUserName(const char *name, uint8_t len);
+
+/**
+ * @fn setUserName
+ * @brief Set the 4G User Password
+ * @param password 
+ * @param len 
+ */
+  void setUserPassword(const char *password, uint8_t len);
+
+/** 
+ * @fn setServerAddr
+ * @brief Set the Server Addr
+ * @param addr 
+ * @param len 
+ */
+  void setServerAddr(const char *addr, uint8_t len);
+
+/**
+ * @fn setServerAddr
+ * @brief set Mount Point
+ * @param point 
+ * @param len 
+ */
+  void setMountPoint(const char *point, uint8_t len);
+
+/**
+ * @fn setPort
+ * @brief Set the Port
+ * @param port 
+ */
+  void setPort(uint16_t port);
+
+/**
+ * @fn connect
+ * @brief connect 
+ * @return String connect state
+ */
+  String connect(void);
 
 /**
  * @fn setCallback
- * @brief Set callback function type 
- * @param  * call function name 
+ * @brief Set callback function type
+ * @param  call function name 
  * @return null
  */
   void setCallback(void (*call)(char *, uint8_t));
-
 ```
 
 ## Compatibility
@@ -197,9 +276,8 @@ Micro:bit          |      √       | nonsupport uart |             |
 
 ## History
 
-- 2022/04/02 - Version 0.0.1 released.
-- 2022/10/26 - Version 1.0.0 released.
+- 2024/03/26 - Version V0.1.0 released.
 
 ## Credits
 
-Written by ZhixinLiu(zhixin.liu@dfrobot.com), 2022. (Welcome to our website)
+Written by ZhixinLiu(zhixin.liu@dfrobot.com), 2024. (Welcome to our website)

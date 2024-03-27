@@ -1,6 +1,6 @@
  /*!
   * @file  getAllGNSS.ino
-  * @brief read all gnss data
+  * @brief read all gnss data at 4G mode
   * @copyright Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
   * @license The MIT License (MIT)
   * @author ZhixinLiu(zhixin.liu@dfrobot.com)
@@ -41,6 +41,14 @@ void callback(char *data, uint8_t len)
   #endif
 #endif
 
+
+#define  USER_NAME      "chwj057879"
+#define  USER_PASSWORD  "45609147"
+#define  SERVER_ADDR    "119.3.136.126"
+#define  MOUNT_POINT    "RTCM33"
+uint16_t port = 8002;
+String   result = "";
+
 void setup()
 {
   Serial.begin(115200);
@@ -50,7 +58,25 @@ void setup()
   }
   Serial.println("Device connected !");
 
-  gnss.setModule(module_lora);
+  rtk.setModule(module_4g);
+
+  rtk.setUserName(USER_NAME, strlen(USER_NAME));
+
+  rtk.setUserPassword(USER_PASSWORD, strlen(USER_PASSWORD));
+
+  rtk.setServerAddr(SERVER_ADDR, strlen(SERVER_ADDR));
+
+  rtk.setMountPoint(MOUNT_POINT, strlen(MOUNT_POINT));
+
+  rtk.setPort(port);
+  
+  result = rtk.connect();
+
+  if((String)"CONNECT SUCCESSFUL" == result){
+    Serial.println("connect success");
+  }else{
+    Serial.println(result);
+  }
 
   gnss.setCallback(callback);
 }

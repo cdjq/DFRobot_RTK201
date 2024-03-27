@@ -1,12 +1,12 @@
  /*!
   * @file  getGNSS4G.ino
-  * @brief Get gnss simple data
+  * @brief Get gnss simple data at 4G mode
   * @copyright Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
   * @license The MIT License (MIT)
   * @author ZhixinLiu(zhixin.liu@dfrobot.com)
   * @version V1.0
   * @date 2023-03-07
-  * @url https://github.com/dfrobot/DFRobot_RTK201
+  * @url https://github.com/DFRobot/DFRobot_RTK201
   */
 
 #include "DFRobot_RTK201.h"
@@ -16,17 +16,17 @@
 #ifdef  I2C_COMMUNICATION
   DFRobot_RTK201_I2C rtk(&Wire ,DEVICE_ADDR);
 #else
-/* ---------------------------------------------------------------------------------------------------------------------
- *    Sensor  |        Development board       | Leonardo/Mega2560/M0 |    UNO    | ESP8266 | ESP32 |  microbit  |   m0  |
- *     VCC    |            3.3V/5V             |        VCC           |    VCC    |   VCC   |  VCC  |     X      |  vcc  |
- *     GND    |              GND               |        GND           |    GND    |   GND   |  GND  |     X      |  gnd  |
- *     RX     |              TX                |     Serial1 TX1      |     5     |   5/D6  |  D2   |     X      |  tx1  |
- *     TX     |              RX                |     Serial1 RX1      |     4     |   4/D7  |  D3   |     X      |  rx1  |
- * ----------------------------------------------------------------------------------------------------------------------*/
+/* -----------------------------------------------------------------------------------------------------
+ * |  Sensor  | Connect line | Leonardo/Mega2560/M0 |    UNO    | ESP8266 | ESP32 |  microbit  |   m0  |
+ * |   VCC    |=============>|        VCC           |    VCC    |   VCC   |  VCC  |     X      |  vcc  |
+ * |   GND    |=============>|        GND           |    GND    |   GND   |  GND  |     X      |  gnd  |
+ * |   RX     |=============>|     Serial1 TX1      |     5     |   5/D6  |  D2   |     X      |  tx1  |
+ * |   TX     |=============>|     Serial1 RX1      |     4     |   4/D7  |  D3   |     X      |  rx1  |
+ * ----------------------------------------------------------------------------------------------------*/
 /* Baud rate cannot be changed */
   #if defined(ARDUINO_AVR_UNO) || defined(ESP8266)
     SoftwareSerial mySerial(4, 5);
-    DFRobot_RTK201_UART rtk(&mySerial, 115200);
+    DFRobot_RTK201_UART rtk(&mySerial, 57600);
   #elif defined(ESP32)
     DFRobot_RTK201_UART rtk(&Serial1, 115200 ,/*rx*/D2 ,/*tx*/D3);
   #else
@@ -42,7 +42,6 @@ uint16_t port = 8002;
 String   result = "";
 void setup()
 {
-
   Serial.begin(115200);
   while(!rtk.begin()){
     Serial.println("NO Deivces !");
@@ -50,10 +49,6 @@ void setup()
   }
   Serial.println("Device connected !");
 
-  /*
-    module_4g
-    module_lora
-  */
   rtk.setModule(module_4g);
 
   rtk.setUserName(USER_NAME, strlen(USER_NAME));
@@ -141,9 +136,9 @@ void loop()
     delay(3000);
   }
 
-  Serial.println(rtk.getSource(gnGGA));
-  Serial.println(rtk.getSource(gnRMC));
-  Serial.println(rtk.getSource(gnGLL));
-  Serial.println(rtk.getSource(gnVTG));
+  Serial.println(rtk.getGnssMessage(gnGGA));
+  Serial.println(rtk.getGnssMessage(gnRMC));
+  Serial.println(rtk.getGnssMessage(gnGLL));
+  Serial.println(rtk.getGnssMessage(gnVTG));
   delay(1000);
 }

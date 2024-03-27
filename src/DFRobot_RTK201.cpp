@@ -130,7 +130,7 @@ double DFRobot_RTK201::getDifTime(void)
   return time;
 }
 
-void DFRobot_RTK201::setModule(Module mode)
+void DFRobot_RTK201::setModule(eModuleMode_t mode)
 {
   uint8_t _sendData[10] = {0};
   if((uint8_t)mode == getModule()){
@@ -143,49 +143,49 @@ void DFRobot_RTK201::setModule(Module mode)
   }
 }
 
-void DFRobot_RTK201::setMoudleBaud(Module_Baud baud)
+void DFRobot_RTK201::setModuleBaud(eModuleBaud_t baud)
 {
   uint8_t _sendData[10] = {0};
   _sendData[0] = (uint8_t)baud;
   writeReg(REG_UNO_BAUD, _sendData, 1);
 }
 
-void DFRobot_RTK201::set4gBaud(Module_Baud baud)
+void DFRobot_RTK201::set4gBaud(eModuleBaud_t baud)
 {
   uint8_t _sendData[10] = {0};
   _sendData[0] = (uint8_t)baud;
   writeReg(REG_4G_BAUD, _sendData, 1);
 }
 
-void DFRobot_RTK201::setLoraBaud(Module_Baud baud)
+void DFRobot_RTK201::setLoraBaud(eModuleBaud_t baud)
 {
   uint8_t _sendData[10] = {0};
   _sendData[0] = (uint8_t)baud;
   writeReg(REG_LORA_BAUD, _sendData, 1);
 }
 
-uint32_t DFRobot_RTK201::getMoudleBaud(void)
+uint32_t DFRobot_RTK201::getModuleBaud(void)
 {
   uint8_t _sendData[10] = {0};
   readReg(REG_UNO_BAUD, _sendData, 1);
-  return baudMatch((Module_Baud)_sendData[0]);
+  return baudMatch((eModuleBaud_t)_sendData[0]);
 }
 
 uint32_t DFRobot_RTK201::getLoraBaud(void)
 {
   uint8_t _sendData[10] = {0};
   readReg(REG_LORA_BAUD, _sendData, 1);
-  return baudMatch((Module_Baud)_sendData[0]);
+  return baudMatch((eModuleBaud_t)_sendData[0]);
 }
 
 uint32_t DFRobot_RTK201::get4gBaud(void)
 {
   uint8_t _sendData[10] = {0};
   readReg(REG_4G_BAUD, _sendData, 1);
-  return baudMatch((Module_Baud)_sendData[0]);
+  return baudMatch((eModuleBaud_t)_sendData[0]);
 }
 
-uint32_t DFRobot_RTK201::baudMatch(Module_Baud baud)
+uint32_t DFRobot_RTK201::baudMatch(eModuleBaud_t baud)
 {
   if(baud == baud_2400){
     return 2400;
@@ -242,9 +242,8 @@ char * DFRobot_RTK201::transmitAT(const char* cmd)
   
   _sendData[0] = 1;
   writeReg(REG_TRANMIT, _sendData, 1);
-  delay(100);
   for(uint8_t i = 0; i < 10; i++){
-    delay(100);
+    delay(150);
     readReg(REG_R_AT_LEN, _sendData, 1);
     len = _sendData[0];
     if(len != 0){
@@ -252,7 +251,9 @@ char * DFRobot_RTK201::transmitAT(const char* cmd)
     }
     if(i >= 9) return (char*)("timer out");
   }
-
+  if(len > 120){
+    return (char*)("return AT cmd to long");
+  }
   while(len){
     if(len > 32){
       writeReg(REG_R_AT_LEN, &oldlen, 1);
@@ -268,16 +269,16 @@ char * DFRobot_RTK201::transmitAT(const char* cmd)
   return (char *)__sourceData.cmd;
 }
 
-Module DFRobot_RTK201::getModule(void)
+eModuleMode_t DFRobot_RTK201::getModule(void)
 {
   uint8_t _sendData[10] = {0};
   delay(10);
   readReg(REG_OPERATION, _sendData, 1);
-  return (Module)_sendData[0];
+  return (eModuleMode_t)_sendData[0];
 }
 
 
-char * DFRobot_RTK201::getSource(GNSS_Mode mode)
+char * DFRobot_RTK201::getGnssMessage(eGnssData_t mode)
 {
   uint8_t len = 0;
   uint8_t i = 0;
@@ -633,9 +634,9 @@ int16_t DFRobot_RTK201_UART::readReg(uint8_t reg, uint8_t *data, uint8_t len)
   delay(4);
   uint32_t nowtime = millis();
   while(millis() - nowtime < TIME_OUT){
-    if(i >= len) return 0;
     while(_serial->available() > 0){
       data[i++] = _serial->read();
+      if(i >= len) return 0;
     }
   }
   delay(4);
