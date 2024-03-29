@@ -511,18 +511,23 @@ String DFRobot_RTK201::connect(void)
   return result;
 }
 
+void DFRobot_RTK201::reConnect(void)
+{
+  uint8_t _sendData[2] = {1,0};
+  writeReg(REG_CONNECT, _sendData, 2);
+  __connetState = 1;
+}
 
 bool DFRobot_RTK201::getConnectState(void)
 {
   uint8_t _sendData[2] = {0};
-  static uint8_t count = 0;
   readReg(REG_CONNECT_STATE, _sendData, 1);
   if(_sendData[0] != 0X55){
-    count++;
+    __connetState++;
   }else{
-    count = 0;
+    __connetState = 0;
   }
-  if(count > 10){
+  if(__connetState > 15){
     return false;
   }
   return true;

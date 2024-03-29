@@ -253,6 +253,20 @@ char * transmitAT(const char* cmd);
   String connect(void);
 
 /**
+ * @fn getConnectState
+ * @brief get connect state
+ * @return true or false
+ */
+  bool getConnectState(void);
+  
+  
+/**
+ * @fn reConnect
+ * @brief re connect
+ */
+  void reConnect(void);
+  
+/**
  * @fn setCallback
  * @brief Set callback function type
  * @param  call function name 
