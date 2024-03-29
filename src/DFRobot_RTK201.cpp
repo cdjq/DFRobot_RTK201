@@ -205,8 +205,8 @@ uint32_t DFRobot_RTK201::baudMatch(eModuleBaud_t baud)
     return 57600;
   }else if(baud == baud_115200){
     return 115200;
-  }else if(baud == baud_230400){
-    return 230400;
+  }else if(baud == baud_256000){
+    return 256000;
   }else if(baud == baud_512000){
     return 512000;
   }else if(baud == baud_921600){
@@ -490,7 +490,7 @@ void DFRobot_RTK201::setPort(uint16_t port)
 
 String DFRobot_RTK201::connect(void)
 {
-  String result = "CONNECT ERROR";
+  String result = CONNECT_ERROR;
   uint8_t _sendData[2] = {1,0};
   writeReg(REG_CONNECT, _sendData, 2);
   delay(500);
@@ -498,17 +498,34 @@ String DFRobot_RTK201::connect(void)
   for(uint8_t i = 0; i < 10; i++)
   {
     readReg(REG_CONNECT_STATE, _sendData, 1);
-    if(_sendData[0] == 0){
-      result = "CONNECT SUCCESSFUL";
+    if(_sendData[0] == 0X55){
+      result = CONNECT_SUCCESS;
       return result;
     }
     delay(1000);
     if(i >= 9){
-      result = "TIMER OUT";
+      result = CONNECT_TIMEOUT;
       return result;
     }
   }
   return result;
+}
+
+
+bool DFRobot_RTK201::getConnectState(void)
+{
+  uint8_t _sendData[2] = {0};
+  static uint8_t count = 0;
+  readReg(REG_CONNECT_STATE, _sendData, 1);
+  if(_sendData[0] != 0X55){
+    count++;
+  }else{
+    count = 0;
+  }
+  if(count > 10){
+    return false;
+  }
+  return true;
 }
 
 void DFRobot_RTK201::setCallback(void (*call)(char *, uint8_t))

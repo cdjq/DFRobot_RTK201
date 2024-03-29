@@ -86,7 +86,7 @@ typedef enum  {
   baud_56000 = 6,
   baud_57600 = 7,
   baud_115200 = 8,
-  baud_230400 = 9,
+  baud_256000 = 9,
   baud_512000 = 10,
   baud_921600 = 11,
 }eModuleBaud_t;
@@ -177,6 +177,9 @@ public:
   #define REG_CONNECT_STATE	113
 
 
+  #define CONNECT_SUCCESS "CONNECT SUCCESSFUL"
+  #define CONNECT_TIMEOUT "TIMER OUT"
+  #define CONNECT_ERROR "CONNECT ERROR"
   #define I2C_FLAG  1
   #define UART_FLAG 2
   #define TIME_OUT  100            ///< uart time out
@@ -404,6 +407,13 @@ public:
   String connect(void);
 
 /**
+ * @fn getConnectState
+ * @brief get connect state
+ * @return true or false
+ */
+  bool getConnectState(void);
+
+/**
  * @fn setCallback
  * @brief Set callback function type
  * @param  call function name 
@@ -416,6 +426,7 @@ private:
   uint8_t  _addr;
   uint8_t  _M_Flag = 0;
   sSource_t __sourceData;
+  uint8_t __connetState = 0;
   uint32_t baudMatch(eModuleBaud_t baud);
 /**
  * @fn getGnssLen

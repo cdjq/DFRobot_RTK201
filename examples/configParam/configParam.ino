@@ -31,7 +31,7 @@ void setup()
    * | baud_56000   |      √      |         √         |   √   |  √  |
    * | baud_57600   |      √      |         √         |   √   |  √  |
    * | baud_115200  |             |         √         |   √   |  √  |
-   * | baud_230400  |             |                   |   √   |  √  |
+   * | baud_256000  |             |                   |   √   |  √  |
    * | baud_512000  |             |                   |   √   |  √  |
    * | baud_921600  |             |                   |   √   |  √  |
    */
@@ -44,24 +44,13 @@ void setup()
    * baud_38400
    * baud_57600
    * baud_115200  defult baud
-   * baud_230400
+   * baud_256000
    * baud_921600
   */
   //rtk.set4gBaud(baud_115200);
 
-  /**
-   * The baud rate of receiving lora information needs to be changed at the same time as the lora module to take effect, and it is not recommended for ordinary users to change it
-   * baud_19200   defult baud
-   * baud_38400
-  */
-  //rtk.setLoraBaud(baud_19200);
-
   Serial.print("moudle buad = ");
   Serial.println(rtk.getModuleBaud());
-
-  Serial.print("lora buad = ");
-  Serial.println(rtk.getLoraBaud());
-
   Serial.print("4g buad = ");
   Serial.println(rtk.get4gBaud());
 }

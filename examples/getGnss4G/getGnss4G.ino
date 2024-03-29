@@ -34,8 +34,8 @@
   #endif
 #endif
 
-#define  USER_NAME      "chwj057879"
-#define  USER_PASSWORD  "45609147"
+#define  USER_NAME      "chwj068746"
+#define  USER_PASSWORD  "16409678"
 #define  SERVER_ADDR    "119.3.136.126"
 #define  MOUNT_POINT    "RTCM33"
 uint16_t port = 8002;
@@ -62,8 +62,7 @@ void setup()
   rtk.setPort(port);
   
   result = rtk.connect();
-
-  if((String)"CONNECT SUCCESSFUL" == result){
+  if((String)CONNECT_SUCCESS == result){
     Serial.println("connect success");
   }else{
     Serial.println(result);
@@ -126,14 +125,9 @@ void loop()
   Serial.print("diftime = ");
   Serial.println(diftime);
 
-  if((diftime < 1.0 || diftime > 10.0) || mode <= 2){
-    result = rtk.connect();
-    if((String)"CONNECT SUCCESSFUL" == result){
-      Serial.println("connect success");
-    }else{
-      Serial.println(result);
-    }
-    delay(3000);
+  if(!rtk.getConnectState()){
+    Serial.println("restart connect .....");
+    rtk.reConnect();
   }
 
   Serial.println(rtk.getGnssMessage(gnGGA));

@@ -1,6 +1,6 @@
  /*!
-  * @file  getAllGNSS.ino
-  * @brief read all gnss data
+  * @file  getAllGNSS4G.ino
+  * @brief read all rtk data at 4G mode
   * @copyright Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
   * @license The MIT License (MIT)
   * @author ZhixinLiu(zhixin.liu@dfrobot.com)
@@ -41,6 +41,14 @@ void callback(char *data, uint8_t len)
   #endif
 #endif
 
+
+#define  USER_NAME      "chwj068746"
+#define  USER_PASSWORD  "16409678"
+#define  SERVER_ADDR    "119.3.136.126"
+#define  MOUNT_POINT    "RTCM33"
+uint16_t port = 8002;
+String   result = "";
+
 void setup()
 {
   Serial.begin(115200);
@@ -50,12 +58,36 @@ void setup()
   }
   Serial.println("Device connected !");
 
-  rtk.setModule(module_lora);
+  rtk.setModule(module_4g);
+
+  rtk.setUserName(USER_NAME, strlen(USER_NAME));
+
+  rtk.setUserPassword(USER_PASSWORD, strlen(USER_PASSWORD));
+
+  rtk.setServerAddr(SERVER_ADDR, strlen(SERVER_ADDR));
+
+  rtk.setMountPoint(MOUNT_POINT, strlen(MOUNT_POINT));
+
+  rtk.setPort(port);
+  Serial.println("connect ...........");
+  result = rtk.connect();
+
+  if((String)"CONNECT SUCCESSFUL" == result){
+    Serial.println("connect success");
+  }else{
+    Serial.println(result);
+  }
 
   rtk.setCallback(callback);
 }
 
 void loop()
 {
+  // Please note that there is no judgment of timeout reconnection for the 4G module here
   rtk.getAllGnss();
+  if(!rtk.getConnectState()){
+    Serial.println("restart connect .....");
+    rtk.reConnect();
+  }
+  
 }

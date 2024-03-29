@@ -1,6 +1,6 @@
  /*!
   * @file  getAllGNSS.ino
-  * @brief read all gnss data at 4G mode
+  * @brief read all rtk data at 4G mode
   * @copyright Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
   * @license The MIT License (MIT)
   * @author ZhixinLiu(zhixin.liu@dfrobot.com)
@@ -21,7 +21,7 @@ void callback(char *data, uint8_t len)
 #define I2C_COMMUNICATION  //use I2C for communication, but use the serial port for communication if the line of codes were masked
 
 #ifdef  I2C_COMMUNICATION
-  DFRobot_RTK201_I2C gnss(&Wire ,DEVICE_ADDR);
+  DFRobot_RTK201_I2C rtk(&Wire ,DEVICE_ADDR);
 #else
 /* -----------------------------------------------------------------------------------------------------
  * |  Sensor  | Connect line | Leonardo/Mega2560/M0 |    UNO    | ESP8266 | ESP32 |  microbit  |   m0  |
@@ -33,17 +33,17 @@ void callback(char *data, uint8_t len)
 /* Baud rate cannot be changed  */
   #if defined(ARDUINO_AVR_UNO) || defined(ESP8266)
     SoftwareSerial mySerial(4, 5);
-    DFRobot_RTK201_UART gnss(&mySerial, 57600);
+    DFRobot_RTK201_UART rtk(&mySerial, 57600);
   #elif defined(ESP32)
-    DFRobot_RTK201_UART gnss(&Serial1, 115200 ,/*rx*/D2 ,/*tx*/D3);
+    DFRobot_RTK201_UART rtk(&Serial1, 115200 ,/*rx*/D2 ,/*tx*/D3);
   #else
-    DFRobot_RTK201_UART gnss(&Serial1, 115200);
+    DFRobot_RTK201_UART rtk(&Serial1, 115200);
   #endif
 #endif
 
 
-#define  USER_NAME      "chwj057879"
-#define  USER_PASSWORD  "45609147"
+#define  USER_NAME      "chwj068746"
+#define  USER_PASSWORD  "16409678"
 #define  SERVER_ADDR    "119.3.136.126"
 #define  MOUNT_POINT    "RTCM33"
 uint16_t port = 8002;
@@ -52,7 +52,7 @@ String   result = "";
 void setup()
 {
   Serial.begin(115200);
-  while(!gnss.begin()){
+  while(!rtk.begin()){
     Serial.println("NO Deivces !");
     delay(1000);
   }
@@ -78,10 +78,20 @@ void setup()
     Serial.println(result);
   }
 
-  gnss.setCallback(callback);
+  rtk.setCallback(callback);
 }
 
 void loop()
 {
-  gnss.getAllGnss();
+  // Please note that there is no judgment of timeout reconnection for the 4G module here
+  rtk.getAllGnss();
+  if(!rtk.getConnectState()){
+  result = rtk.connect();
+  if((String)CONNECT_SUCCESS == result){
+    Serial.println("connect success");
+  }else{
+    Serial.println(result);
+  }
+  delay(1000);
+  }
 }

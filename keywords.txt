@@ -41,6 +41,8 @@ setServerAddr	KEYWORD2
 setMountPoint	KEYWORD2
 setPort	KEYWORD2
 connect	KEYWORD2
+getConnectState	KEYWORD2
+reConnect	KEYWORD2
 setCallback	KEYWORD2
 sTim_t	KEYWORD2
 sLonLat_t	KEYWORD2

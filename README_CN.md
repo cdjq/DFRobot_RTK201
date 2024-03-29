@@ -259,6 +259,20 @@ char * transmitAT(const char* cmd);
   String connect(void);
 
 /**
+ * @fn getConnectState
+ * @brief 获取连接状态
+ * @return true or false
+ */
+  bool getConnectState(void);
+
+
+/**
+ * @fn reConnect
+ * @brief 重新连接
+ */
+  void reConnect(void);
+
+/**
  * @fn setCallback
  * @brief 设置回调函数类型
  * @param  * call 函数名
