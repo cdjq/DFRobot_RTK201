@@ -4,8 +4,8 @@
   * @copyright Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
   * @license The MIT License (MIT)
   * @author ZhixinLiu(zhixin.liu@dfrobot.com)
-  * @version V1.0
-  * @date 2023-03-07
+  * @version V0.5.0
+  * @date 2023-04-23
   * @url https://github.com/DFRobot/DFRobot_RTK201
   */
 
@@ -48,19 +48,19 @@ void setup()
     delay(1000);
   }
   Serial.println("Device connected !");
-
   rtk.setModule(module_4g);
-
+  while(rtk.getModule() != module_4g){
+    Serial.println("Module type is not 4G!  please wait!");
+    delay(1000);
+  }
   rtk.setUserName(USER_NAME, strlen(USER_NAME));
-
   rtk.setUserPassword(USER_PASSWORD, strlen(USER_PASSWORD));
-
   rtk.setServerAddr(SERVER_ADDR, strlen(SERVER_ADDR));
-
   rtk.setMountPoint(MOUNT_POINT, strlen(MOUNT_POINT));
-
   rtk.setPort(port);
-  
+  Serial.println("please wait 4g module init!");
+  delay(5000);
+  Serial.println("connecting network please wait !");
   result = rtk.connect();
   if((String)CONNECT_SUCCESS == result){
     Serial.println("connect success");
@@ -124,15 +124,14 @@ void loop()
   Serial.println(siteID);
   Serial.print("diftime = ");
   Serial.println(diftime);
+  Serial.println(rtk.getGnssMessage(gnGGA));
+  Serial.println(rtk.getGnssMessage(gnRMC));
+  Serial.println(rtk.getGnssMessage(gnGLL));
+  Serial.println(rtk.getGnssMessage(gnVTG));
 
   if(!rtk.getConnectState()){
     Serial.println("restart connect .....");
     rtk.reConnect();
   }
-
-  Serial.println(rtk.getGnssMessage(gnGGA));
-  Serial.println(rtk.getGnssMessage(gnRMC));
-  Serial.println(rtk.getGnssMessage(gnGLL));
-  Serial.println(rtk.getGnssMessage(gnVTG));
   delay(1000);
 }

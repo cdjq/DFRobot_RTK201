@@ -4,8 +4,8 @@
   * @copyright Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
   * @license The MIT License (MIT)
   * @author ZhixinLiu(zhixin.liu@dfrobot.com)
-  * @version V1.0
-  * @date 2023-03-07
+  * @version V0.5.0
+  * @date 2024-04-24
   * @url https://github.com/DFRobot/DFRobot_RTK201
   */
 
@@ -48,6 +48,8 @@ void setup()
    * baud_921600
   */
   //rtk.set4gBaud(baud_115200);
+  Serial.print("module mode = ");
+  Serial.println(rtk.getModule());
 
   Serial.print("moudle buad = ");
   Serial.println(rtk.getModuleBaud());

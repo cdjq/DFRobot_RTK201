@@ -4,8 +4,8 @@
  * @copyright	Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
  * @license The MIT License (MIT)
  * @author [ZhixinLiu](zhixin.liu@dfrobot.com)
- * @version V1.0
- * @date 2023-03-07
+ * @version V0.5.0
+ * @date 2024-04-23
  * @url https://github.com/DFRobot/DFRobot_RTK201
  */
 #include "DFRobot_RTK201.h"
@@ -16,7 +16,7 @@ DFRobot_RTK201::~DFRobot_RTK201(){}
 sTim_t DFRobot_RTK201::getDate(void)
 {
   sTim_t data;
-  uint8_t _sendData[10] = {0};
+  uint8_t _sendData[TEMP_LEN] = {0};
   readReg(REG_YEAR_H, _sendData, 4);
   data.year = ((uint16_t)_sendData[0] << 8) | _sendData[1];
   data.month = _sendData[2];
@@ -27,7 +27,7 @@ sTim_t DFRobot_RTK201::getDate(void)
 sTim_t DFRobot_RTK201::getUTC(void)
 {
   sTim_t data;
-  uint8_t _sendData[10] = {0};
+  uint8_t _sendData[TEMP_LEN] = {0};
   readReg(REG_HOUR, _sendData, 3);
   data.hour   = _sendData[0];
   data.minute = _sendData[1];
@@ -38,7 +38,7 @@ sTim_t DFRobot_RTK201::getUTC(void)
 sLonLat_t DFRobot_RTK201::getLat(void)
 {
   sLonLat_t data;
-  uint8_t _sendData[10] = {0};
+  uint8_t _sendData[TEMP_LEN] = {0};
   readReg(REG_LAT_1, _sendData, 6);
   data.latDD  = _sendData[0];
   data.latMM = _sendData[1];
@@ -52,7 +52,7 @@ sLonLat_t DFRobot_RTK201::getLat(void)
 sLonLat_t DFRobot_RTK201::getLon(void)
 {
   sLonLat_t data;
-  uint8_t _sendData[10] = {0};
+  uint8_t _sendData[TEMP_LEN] = {0};
   readReg(REG_LON_1, _sendData, 6);
   data.lonDDD  = _sendData[0];
   data.lonMM = _sendData[1];
@@ -65,7 +65,7 @@ sLonLat_t DFRobot_RTK201::getLon(void)
 
 uint8_t DFRobot_RTK201::getNumSatUsed(void)
 {
-  uint8_t _sendData[10] = {0};
+  uint8_t _sendData[TEMP_LEN] = {0};
   readReg(REG_USE_STAR, _sendData, 1);
   return _sendData[0];
 }
@@ -74,7 +74,7 @@ double DFRobot_RTK201::getAlt(void)
 {
   double high;
   double sign = 1.0;
-  uint8_t _sendData[10] = {0};
+  uint8_t _sendData[TEMP_LEN] = {0};
   readReg(REG_ALT_H, _sendData, 3);
   if(_sendData[0]&0x80){
     _sendData[0] &= 0x7F;
@@ -88,7 +88,7 @@ double DFRobot_RTK201::getSep(void)
 {
   double high;
   double sign = 1.0;
-  uint8_t _sendData[10] = {0};
+  uint8_t _sendData[TEMP_LEN] = {0};
   readReg(REG_SEP_H, _sendData, 3);
   if(_sendData[0]&0x80){
     _sendData[0] &= 0x7F;
@@ -101,7 +101,7 @@ double DFRobot_RTK201::getSep(void)
 double DFRobot_RTK201::getHdop(void)
 {
   double hdop;
-  uint8_t _sendData[10] = {0};
+  uint8_t _sendData[TEMP_LEN] = {0};
   readReg(REG_HDOP_Z, _sendData, 2);
   hdop = (double)_sendData[0] + (double)_sendData[1]/100.0;
   return hdop;
@@ -109,14 +109,14 @@ double DFRobot_RTK201::getHdop(void)
 
 uint8_t DFRobot_RTK201::getQuality(void)
 {
-  uint8_t _sendData[10] = {0};
+  uint8_t _sendData[TEMP_LEN] = {0};
   readReg(REG_GPS_STATE, _sendData, 1);
   return _sendData[0];
 }
 
 uint16_t DFRobot_RTK201::getSiteID(void)
 {
-  uint8_t _sendData[10] = {0};
+  uint8_t _sendData[TEMP_LEN] = {0};
   readReg(REG_DIFID_H, _sendData, 2);
   return (uint16_t)_sendData[0] << 8 | _sendData[1];
 }
@@ -124,7 +124,7 @@ uint16_t DFRobot_RTK201::getSiteID(void)
 double DFRobot_RTK201::getDifTime(void)
 {
   double time;
-  uint8_t _sendData[10] = {0};
+  uint8_t _sendData[TEMP_LEN] = {0};
   readReg(REG_DIF_Z, _sendData, 2);
   time = (double)_sendData[0] + (double)_sendData[1]/100.0;
   return time;
@@ -132,55 +132,59 @@ double DFRobot_RTK201::getDifTime(void)
 
 void DFRobot_RTK201::setModule(eModuleMode_t mode)
 {
-  uint8_t _sendData[10] = {0};
+  uint8_t _sendData[TEMP_LEN] = {0};
   if((uint8_t)mode == getModule()){
     return;
   }else{
     delay(50);
     _sendData[0] = mode;
     writeReg(REG_OPERATION, _sendData, 1);
-    delay(500);
+    if(mode == module_4g){
+      delay(3000);
+    }else{
+      delay(1000);
+    }
   }
 }
 
 void DFRobot_RTK201::setModuleBaud(eModuleBaud_t baud)
 {
-  uint8_t _sendData[10] = {0};
+  uint8_t _sendData[TEMP_LEN] = {0};
   _sendData[0] = (uint8_t)baud;
   writeReg(REG_UNO_BAUD, _sendData, 1);
 }
 
 void DFRobot_RTK201::set4gBaud(eModuleBaud_t baud)
 {
-  uint8_t _sendData[10] = {0};
+  uint8_t _sendData[TEMP_LEN] = {0};
   _sendData[0] = (uint8_t)baud;
   writeReg(REG_4G_BAUD, _sendData, 1);
 }
 
 void DFRobot_RTK201::setLoraBaud(eModuleBaud_t baud)
 {
-  uint8_t _sendData[10] = {0};
+  uint8_t _sendData[TEMP_LEN] = {0};
   _sendData[0] = (uint8_t)baud;
   writeReg(REG_LORA_BAUD, _sendData, 1);
 }
 
 uint32_t DFRobot_RTK201::getModuleBaud(void)
 {
-  uint8_t _sendData[10] = {0};
+  uint8_t _sendData[TEMP_LEN] = {0};
   readReg(REG_UNO_BAUD, _sendData, 1);
   return baudMatch((eModuleBaud_t)_sendData[0]);
 }
 
 uint32_t DFRobot_RTK201::getLoraBaud(void)
 {
-  uint8_t _sendData[10] = {0};
+  uint8_t _sendData[TEMP_LEN] = {0};
   readReg(REG_LORA_BAUD, _sendData, 1);
   return baudMatch((eModuleBaud_t)_sendData[0]);
 }
 
 uint32_t DFRobot_RTK201::get4gBaud(void)
 {
-  uint8_t _sendData[10] = {0};
+  uint8_t _sendData[TEMP_LEN] = {0};
   readReg(REG_4G_BAUD, _sendData, 1);
   return baudMatch((eModuleBaud_t)_sendData[0]);
 }
@@ -239,8 +243,7 @@ char * DFRobot_RTK201::transmitAT(const char* cmd)
       len = 0;
     }
   }
-  
-  _sendData[0] = 1;
+  _sendData[0] = 0xaa;
   writeReg(REG_TRANMIT, _sendData, 1);
   for(uint8_t i = 0; i < 10; i++){
     delay(150);
@@ -271,7 +274,7 @@ char * DFRobot_RTK201::transmitAT(const char* cmd)
 
 eModuleMode_t DFRobot_RTK201::getModule(void)
 {
-  uint8_t _sendData[10] = {0};
+  uint8_t _sendData[TEMP_LEN] = {0};
   delay(10);
   readReg(REG_OPERATION, _sendData, 1);
   return (eModuleMode_t)_sendData[0];
@@ -288,81 +291,85 @@ char * DFRobot_RTK201::getGnssMessage(eGnssData_t mode)
   memset(__sourceData.vtg, 0, sizeof(__sourceData.vtg));
 
   if(mode == gnGGA){
-    if(uartI2CFlag == UART_FLAG) {
-      readReg(REG_GGA_LEN, &len, 1);
-      readReg(REG_GGA_ALL, (uint8_t *)(__sourceData.gga), len);
-    }else{
-      readReg(REG_GGA_LEN, &len, 1);
-      while(len){
-        if(len > 32){
-          writeReg(REG_GGA_LEN, &i, 1);
-          readReg(REG_GGA_ALL, (uint8_t *)(__sourceData.gga+i), 32);
-          len -= 32;
-          i += 32;
-        }else{
-          writeReg(REG_GGA_LEN, &i, 1);
-          readReg(REG_GGA_ALL, (uint8_t *)(__sourceData.gga+i), len);
-          len = 0;
+    readReg(REG_GGA_LEN, &len, 1);
+    if(len < sizeof(__sourceData.gga)){
+      if(uartI2CFlag == UART_FLAG) {
+        readReg(REG_GGA_ALL, (uint8_t *)(__sourceData.gga), len);
+      }else{
+        while(len){
+          if(len > 32){
+            writeReg(REG_GGA_LEN, &i, 1);
+            readReg(REG_GGA_ALL, (uint8_t *)(__sourceData.gga+i), 32);
+            len -= 32;
+            i += 32;
+          }else{
+            writeReg(REG_GGA_LEN, &i, 1);
+            readReg(REG_GGA_ALL, (uint8_t *)(__sourceData.gga+i), len);
+            len = 0;
+          }
         }
       }
     }
     return __sourceData.gga;
   }else if (mode == gnRMC){
-    if(uartI2CFlag == UART_FLAG) {
-      readReg(REG_RMC_LEN, &len, 1);
-      readReg(REG_RMC_ALL, (uint8_t *)(__sourceData.rmc), len);
-    }else{
-      readReg(REG_RMC_LEN, &len, 1);
-      while(len){
-        if(len > 32){
-          writeReg(REG_RMC_LEN, &i, 1);
-          readReg(REG_RMC_ALL, (uint8_t *)(__sourceData.rmc+i), 32);
-          len -= 32;
-          i += 32;
-        }else{
-          writeReg(REG_RMC_LEN, &i, 1);
-          readReg(REG_RMC_ALL, (uint8_t *)(__sourceData.rmc+i), len);
-          len = 0;
+    readReg(REG_RMC_LEN, &len, 1);
+    if(len < sizeof(__sourceData.rmc)){
+      if(uartI2CFlag == UART_FLAG) {
+        readReg(REG_RMC_ALL, (uint8_t *)(__sourceData.rmc), len);
+      }else{
+        while(len){
+          if(len > 32){
+            writeReg(REG_RMC_LEN, &i, 1);
+            readReg(REG_RMC_ALL, (uint8_t *)(__sourceData.rmc+i), 32);
+            len -= 32;
+            i += 32;
+          }else{
+            writeReg(REG_RMC_LEN, &i, 1);
+            readReg(REG_RMC_ALL, (uint8_t *)(__sourceData.rmc+i), len);
+            len = 0;
+          }
         }
       }
     }
     return __sourceData.rmc;
   }else if (mode == gnGLL){
-    if(uartI2CFlag == UART_FLAG) {
-      readReg(REG_GLL_LEN, &len, 1);
-      readReg(REG_GLL_ALL, (uint8_t *)(__sourceData.gll), len);
-    }else{
-      readReg(REG_GLL_LEN, &len, 1);
-      while(len){
-        if(len > 32){
-          writeReg(REG_GLL_LEN, &i, 1);
-          readReg(REG_GLL_ALL, (uint8_t *)(__sourceData.gll+i), 32);
-          len -= 32;
-          i += 32;
-        }else{
-          writeReg(REG_GLL_LEN, &i, 1);
-          readReg(REG_GLL_ALL, (uint8_t *)(__sourceData.gll+i), len);
-          len = 0;
+    readReg(REG_GLL_LEN, &len, 1);
+    if(len < sizeof(__sourceData.gll)){
+      if(uartI2CFlag == UART_FLAG) {
+        readReg(REG_GLL_ALL, (uint8_t *)(__sourceData.gll), len);
+      }else{
+        while(len){
+          if(len > 32){
+            writeReg(REG_GLL_LEN, &i, 1);
+            readReg(REG_GLL_ALL, (uint8_t *)(__sourceData.gll+i), 32);
+            len -= 32;
+            i += 32;
+          }else{
+            writeReg(REG_GLL_LEN, &i, 1);
+            readReg(REG_GLL_ALL, (uint8_t *)(__sourceData.gll+i), len);
+            len = 0;
+          }
         }
       }
     }
     return __sourceData.gll;
   }else{    //(mode == gnVTG){
-    if(uartI2CFlag == UART_FLAG) {
-      readReg(REG_VTG_LEN, &len, 1);
-      readReg(REG_VTG_ALL, (uint8_t *)(__sourceData.vtg), len);
-    }else{
-      readReg(REG_VTG_LEN, &len, 1);
-      while(len){
-        if(len > 32){
-          writeReg(REG_VTG_LEN, &i, 1);
-          readReg(REG_VTG_ALL, (uint8_t *)(__sourceData.vtg+i), 32);
-          len -= 32;
-          i += 32;
-        }else{
-          writeReg(REG_VTG_LEN, &i, 1);
-          readReg(REG_VTG_ALL, (uint8_t *)(__sourceData.vtg+i), len);
-          len = 0;
+    readReg(REG_VTG_LEN, &len, 1);
+    if(len < sizeof(__sourceData.vtg)){
+      if(uartI2CFlag == UART_FLAG) {
+        readReg(REG_VTG_ALL, (uint8_t *)(__sourceData.vtg), len);
+      }else{
+        while(len){
+          if(len > 32){
+            writeReg(REG_VTG_LEN, &i, 1);
+            readReg(REG_VTG_ALL, (uint8_t *)(__sourceData.vtg+i), 32);
+            len -= 32;
+            i += 32;
+          }else{
+            writeReg(REG_VTG_LEN, &i, 1);
+            readReg(REG_VTG_ALL, (uint8_t *)(__sourceData.vtg+i), len);
+            len = 0;
+          }
         }
       }
     }
@@ -373,17 +380,16 @@ char * DFRobot_RTK201::getGnssMessage(eGnssData_t mode)
 uint16_t DFRobot_RTK201::getGnssLen(void)
 {
   uint8_t count = 0;
-  uint8_t _sendData[10] = {2};
+  uint8_t _sendData[TEMP_LEN] = {0xAA};
   // enter all data mode
   writeReg(REG_ALL_MODE, _sendData, 1);
-  delay(100);
-  while(1){ 
+  while(1){
     readReg(REG_ALL_MODE, _sendData, 1);
     delay(100);
-    if(_sendData[0] == 1){
+    if(_sendData[0] == 0x55){
       break;
     }
-    if(count++ > 10){
+    if(count++ > 20){
       return 0;
     }
   }
@@ -393,7 +399,7 @@ uint16_t DFRobot_RTK201::getGnssLen(void)
 
 void DFRobot_RTK201::getAllGnss(void)
 {
-  uint8_t _sendData[256] = {0};
+  uint8_t _sendData[300] = {0};
   uint16_t len = getGnssLen();
   if(len > MAX_LEN){
     return;
@@ -481,18 +487,17 @@ void DFRobot_RTK201::setMountPoint(const char *point, uint8_t len)
 
 void DFRobot_RTK201::setPort(uint16_t port)
 {
-  uint8_t _sendData[2] = {0};
+  uint8_t _sendData[TEMP_LEN]  = {0};
   _sendData[0] = port>>8;
   _sendData[1] = port;
   writeReg(REG_PORT_H, _sendData, 2);
-  delay(10);
 }
 
 String DFRobot_RTK201::connect(void)
 {
   String result = CONNECT_ERROR;
-  uint8_t _sendData[2] = {1,0};
-  writeReg(REG_CONNECT, _sendData, 2);
+  uint8_t _sendData[TEMP_LEN]  = {0xaa};
+  writeReg(REG_CONNECT, _sendData, 1);
   delay(500);
   
   for(uint8_t i = 0; i < 10; i++)
@@ -513,14 +518,17 @@ String DFRobot_RTK201::connect(void)
 
 void DFRobot_RTK201::reConnect(void)
 {
-  uint8_t _sendData[2] = {1,0};
-  writeReg(REG_CONNECT, _sendData, 2);
+  uint8_t _sendData[TEMP_LEN]  = {0xaa};
+  writeReg(REG_CONNECT, _sendData, 1);
   __connetState = 1;
+  if(uartI2CFlag == UART_FLAG){
+    delay(1000);
+  }
 }
 
 bool DFRobot_RTK201::getConnectState(void)
 {
-  uint8_t _sendData[2] = {0};
+  uint8_t _sendData[TEMP_LEN]  = {0};
   readReg(REG_CONNECT_STATE, _sendData, 1);
   if(_sendData[0] != 0X55){
     __connetState++;
@@ -547,8 +555,8 @@ DFRobot_RTK201_I2C::DFRobot_RTK201_I2C(TwoWire *pWire, uint8_t addr)
 
 bool DFRobot_RTK201_I2C::begin()
 {
-  _pWire->setClock(400000);
   _pWire->begin();
+  _pWire->setClock(100000);
   _pWire->beginTransmission(_I2C_addr);
   if(_pWire->endTransmission() == 0){
     return true;
@@ -565,7 +573,6 @@ void DFRobot_RTK201_I2C::writeReg(uint8_t reg, uint8_t *data, uint8_t len)
     _pWire->write(data[i]);
   }
   _pWire->endTransmission();
-  delay(1);
 }
 
 int16_t DFRobot_RTK201_I2C::readReg(uint8_t reg, uint8_t *data, uint8_t len)
@@ -582,7 +589,9 @@ int16_t DFRobot_RTK201_I2C::readReg(uint8_t reg, uint8_t *data, uint8_t len)
       }
       _pWire->requestFrom((uint8_t)this->_I2C_addr,(uint8_t)32);
       while (_pWire->available()){
-        data[i++]=_pWire->read();
+        //if(i < len-1){
+          data[i++]=_pWire->read();
+        //}
       }
       length -= 32;
     }else{
@@ -593,7 +602,9 @@ int16_t DFRobot_RTK201_I2C::readReg(uint8_t reg, uint8_t *data, uint8_t len)
       }
       _pWire->requestFrom((uint8_t)this->_I2C_addr,(uint8_t)length);
       while (_pWire->available()){
-        data[i++]=_pWire->read();
+        //if(i < len-1){
+          data[i++]=_pWire->read();
+        //}
       }
       length = 0;
     }
@@ -623,9 +634,10 @@ int16_t DFRobot_RTK201_I2C::readReg(uint8_t reg, uint8_t *data, uint8_t len)
 
 bool DFRobot_RTK201_UART::begin()
 {
-  uint8_t _sendData[10] = {0};
+  uint8_t _sendData[TEMP_LEN] = {0};
   #ifdef ESP32
     _serial->begin(this->_baud, SERIAL_8N1, _txpin, _rxpin);
+    delay(100);
   #elif defined(ARDUINO_AVR_UNO) || defined(ESP8266)
     // nothing use software
   #else
@@ -645,7 +657,7 @@ void DFRobot_RTK201_UART::writeReg(uint8_t reg, uint8_t *data, uint8_t len)
   for(uint8_t i = 0; i < len; i++){
     _serial->write(data[i]);
   }
-  delay(4);
+  delay(5);
 }
 
 int16_t DFRobot_RTK201_UART::readReg(uint8_t reg, uint8_t *data, uint8_t len)
@@ -653,14 +665,13 @@ int16_t DFRobot_RTK201_UART::readReg(uint8_t reg, uint8_t *data, uint8_t len)
   uint8_t i = 0;
   _serial->write((uint8_t)reg & 0x7F);
   _serial->write(len);
-  delay(4);
   uint32_t nowtime = millis();
   while(millis() - nowtime < TIME_OUT){
     while(_serial->available() > 0){
       data[i++] = _serial->read();
-      if(i >= len) return 0;
+      if(i == len) { _serial->flush(); return 0; }
     }
   }
-  delay(4);
+  _serial->flush();
   return 0;
 }

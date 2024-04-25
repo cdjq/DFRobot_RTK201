@@ -4,8 +4,8 @@
   * @copyright Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
   * @license The MIT License (MIT)
   * @author ZhixinLiu(zhixin.liu@dfrobot.com)
-  * @version V1.0
-  * @date 2023-03-07
+  * @version V0.5.0
+  * @date 2023-04-23
   * @url https://github.com/DFRobot/DFRobot_RTK201
   */
 
@@ -14,7 +14,7 @@
 #define I2C_COMMUNICATION  //use I2C for communication, but use the serial port for communication if the line of codes were masked
 
 #ifdef  I2C_COMMUNICATION
-  DFRobot_RTK201_I2C gnss(&Wire ,DEVICE_ADDR);
+  DFRobot_RTK201_I2C rtk(&Wire ,DEVICE_ADDR);
 #else
 /* -----------------------------------------------------------------------------------------------------
  * |  Sensor  | Connect line | Leonardo/Mega2560/M0 |    UNO    | ESP8266 | ESP32 |  microbit  |   m0  |
@@ -26,38 +26,42 @@
 /* Baud rate cannot be changed */
   #if defined(ARDUINO_AVR_UNO) || defined(ESP8266)
     SoftwareSerial mySerial(4, 5);
-    DFRobot_RTK201_UART gnss(&mySerial, 57600);
+    DFRobot_RTK201_UART rtk(&mySerial, 57600);
   #elif defined(ESP32)
-    DFRobot_RTK201_UART gnss(&Serial1, 115200 ,/*rx*/D2 ,/*tx*/D3);
+    DFRobot_RTK201_UART rtk(&Serial1, 115200 ,/*rx*/D2 ,/*tx*/D3);
   #else
-    DFRobot_RTK201_UART gnss(&Serial1, 115200);
+    DFRobot_RTK201_UART rtk(&Serial1, 115200);
   #endif
 #endif
 
 void setup()
 {
   Serial.begin(115200);
-  while(!gnss.begin()){
+  while(!rtk.begin()){
     Serial.println("NO Deivces !");
     delay(1000);
   }
   Serial.println("Device connected !");
-  gnss.setModule(module_lora);
+  rtk.setModule(module_lora);
+  while(rtk.getModule() != module_lora){
+    Serial.println("Module type is not lora!  please wait!");
+    delay(1000);
+  }
 }
 
 void loop()
 {
-  sTim_t utc = gnss.getUTC();
-  sTim_t date = gnss.getDate();
-  sLonLat_t lat = gnss.getLat();
-  sLonLat_t lon = gnss.getLon();
-  double high = gnss.getAlt();
-  uint8_t starUserd = gnss.getNumSatUsed();
-  double hdop = gnss.getHdop();
-  double sep = gnss.getSep();
-  uint8_t mode = gnss.getQuality();
-  uint16_t siteID = gnss.getSiteID();
-  double diftime = gnss.getDifTime();
+  sTim_t utc = rtk.getUTC();
+  sTim_t date = rtk.getDate();
+  sLonLat_t lat = rtk.getLat();
+  sLonLat_t lon = rtk.getLon();
+  double high = rtk.getAlt();
+  uint8_t starUserd = rtk.getNumSatUsed();
+  double hdop = rtk.getHdop();
+  double sep = rtk.getSep();
+  uint8_t mode = rtk.getQuality();
+  uint16_t siteID = rtk.getSiteID();
+  double diftime = rtk.getDifTime();
 
   Serial.println("");
   Serial.print(date.year);
@@ -100,9 +104,9 @@ void loop()
   Serial.print("diftime = ");
   Serial.println(diftime);
   
-  Serial.println(gnss.getGnssMessage(gnGGA));
-  Serial.println(gnss.getGnssMessage(gnRMC));
-  Serial.println(gnss.getGnssMessage(gnGLL));
-  Serial.println(gnss.getGnssMessage(gnVTG));
+  Serial.println(rtk.getGnssMessage(gnGGA));
+  Serial.println(rtk.getGnssMessage(gnRMC));
+  Serial.println(rtk.getGnssMessage(gnGLL));
+  Serial.println(rtk.getGnssMessage(gnVTG));
   delay(500);
 }

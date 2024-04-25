@@ -143,12 +143,12 @@ There are two methods for using this library:<br>
  */
   eModuleMode_t getModule(void);
 
-/**
- * @fn transmitAT
- * @brief Interface for transparent transmission of gnss commands
- * @return char * return commands
- */
-char * transmitAT(const char* cmd);
+  /**
+   * @fn transmitAT
+   * @brief Interface for transparent transmission of gnss commands
+   * @return char * return commands
+   */
+  char * transmitAT(const char* cmd);
 
 /**
  * @fn getGnssMessage
@@ -161,6 +161,7 @@ char * transmitAT(const char* cmd);
 /**
  * @fn getAllGnss
  * @brief Get GNSS data, call back and receive
+ * @return null
  */
   void getAllGnss(void);
 
@@ -181,67 +182,67 @@ char * transmitAT(const char* cmd);
 /**
  * @fn setLoraBaud
  * @brief Set the recevie Lora Baud rate
- * @param baud 
+ * @param baud eModuleBaud_t
  */
   void setLoraBaud(eModuleBaud_t baud);
 
 /**
  * @fn getModuleBaud
  * @brief Get the Module Baud rate
- * @return uint32_t 
+ * @return uint32_t Baud rate of serial communication
  */
   uint32_t getModuleBaud(void);
 
 /**
- * @fn getModuleBaud
+ * @fn getLoraBaud
  * @brief Get the Lora Baud rate
- * @return uint32_t 
+ * @return uint32_t Baud rate of serial communication
  */
   uint32_t getLoraBaud(void);
 
 /**
  * @fn get4gBaud
  * @brief Get the 4G Baud rate
- * @return uint32_t 
+ * @return uint32_t Baud rate of serial communication
  */
   uint32_t get4gBaud(void);
 
 /**
  * @fn setUserName
  * @brief Set the 4G User Name
- * @param name 
- * @param len 
+ * @param name user name eg:"chw123456789"
+ * @param len name length
  */
   void setUserName(const char *name, uint8_t len);
 
 /**
- * @fn setUserName
+ * @fn setUserPassword
  * @brief Set the 4G User Password
- * @param password 
- * @param len 
+ * @param password eg:"12345678"
+ * @param len password length
  */
   void setUserPassword(const char *password, uint8_t len);
 
 /** 
  * @fn setServerAddr
  * @brief Set the Server Addr
- * @param addr 
- * @param len 
+ * @param addr ip address eg: "192.168.1.1"
+ * @param len addr length
  */
   void setServerAddr(const char *addr, uint8_t len);
 
 /**
  * @fn setServerAddr
  * @brief set Mount Point
- * @param point 
- * @param len 
+ * @param point eg："RTCM33"
+ * @param len point length
  */
   void setMountPoint(const char *point, uint8_t len);
 
 /**
  * @fn setPort
  * @brief Set the Port
- * @param port 
+ * @param port eg: 8002
  */
   void setPort(uint16_t port);
 
@@ -258,14 +259,13 @@ char * transmitAT(const char* cmd);
  * @return true or false
  */
   bool getConnectState(void);
-  
-  
+
 /**
  * @fn reConnect
  * @brief re connect
  */
   void reConnect(void);
-  
+
 /**
  * @fn setCallback
  * @brief Set callback function type

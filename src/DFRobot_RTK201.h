@@ -92,20 +92,20 @@ typedef enum  {
 }eModuleBaud_t;
 
 /**
- * @enum sSource_t
+ * @struct sSource_t
  * @brief Data storage buffer
  */
 typedef struct {
   char  gga[120];
   char  rmc[120];
   char  gll[100];
-  char  vtg[60];
+  char  vtg[100];
   char  cmd[120];
 } sSource_t;
 
 class DFRobot_RTK201{
 public:
-  #define MAX_LEN       3000
+  #define MAX_LEN       2200
   #define REG_YEAR_H 		0
   #define REG_YEAR_L 		1
   #define REG_MONTH 		2
@@ -182,9 +182,9 @@ public:
   #define CONNECT_ERROR "CONNECT ERROR"
   #define I2C_FLAG  1
   #define UART_FLAG 2
-  #define TIME_OUT  100            ///< uart time out
+  #define TIME_OUT  200            ///< uart time out
   #define DEVICE_ADDR 0x20
-
+  #define TEMP_LEN 20
   DFRobot_RTK201();
   ~DFRobot_RTK201();
   uint8_t  uartI2CFlag = 0;
@@ -335,28 +335,28 @@ public:
 /**
  * @fn setLoraBaud
  * @brief Set the recevie Lora Baud rate
- * @param baud 
+ * @param baud eModuleBaud_t
  */
   void setLoraBaud(eModuleBaud_t baud);
 
 /**
  * @fn getModuleBaud
  * @brief Get the Module Baud rate
- * @return uint32_t 
+ * @return uint32_t Baud rate of serial communication
  */
   uint32_t getModuleBaud(void);
 
 /**
- * @fn getModuleBaud
+ * @fn getLoraBaud
  * @brief Get the Lora Baud rate
- * @return uint32_t 
+ * @return uint32_t Baud rate of serial communication
  */
   uint32_t getLoraBaud(void);
 
 /**
  * @fn get4gBaud
  * @brief Get the 4G Baud rate
- * @return uint32_t 
+ * @return uint32_t Baud rate of serial communication
  */
   uint32_t get4gBaud(void);
 
@@ -369,7 +369,7 @@ public:
   void setUserName(const char *name, uint8_t len);
 
 /**
- * @fn setUserName
+ * @fn setUserPassword
  * @brief Set the 4G User Password
  * @param password 
  * @param len 

@@ -4,8 +4,8 @@
   * @copyright Copyright (c) 2010 DFRobot Co.Ltd (http://www.dfrobot.com)
   * @license The MIT License (MIT)
   * @author ZhixinLiu(zhixin.liu@dfrobot.com)
-  * @version V1.0
-  * @date 2023-03-07
+  * @version V0.5.0
+  * @date 2024-04-23
   * @url https://github.com/DFRobot/DFRobot_RTK201
   */
 
@@ -51,7 +51,10 @@ void setup()
   Serial.println("Device connected !");
 
   rtk.setModule(module_lora);
-
+  while(rtk.getModule() != module_lora){
+    Serial.println("Module type is not lora!  please wait!");
+    delay(1000);
+  }
   rtk.setCallback(callback);
 }
 

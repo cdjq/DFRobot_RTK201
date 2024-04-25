@@ -154,7 +154,7 @@ void disablePower(void);
  * @brief 透传给gnss的命令接口
  * @return char * 返回gnss 返回的数据
  */
-char * transmitAT(const char* cmd);
+  char * transmitAT(const char* cmd);
 
 /**
  * @fn getGnssMessage
@@ -173,81 +173,81 @@ char * transmitAT(const char* cmd);
 /**
  * @fn setModuleBaud
  * @brief 设置模块运行的波特率
- * @param baud eModuleBaud_t
+ * @param baud eModuleBaud_t 枚举类型
  */
   void setModuleBaud(eModuleBaud_t baud);
 
 /**
  * @fn set4gBaud
  * @brief 设置接收4g模块的波特率
- * @param baud eModuleBaud_t
+ * @param baud eModuleBaud_t 枚举类型
  */
   void set4gBaud(eModuleBaud_t baud);
 
 /**
  * @fn setLoraBaud
  * @brief 设置接收lora模块的波特率
- * @param baud 
+ * @param baud eModuleBaud_t 枚举类型
  */
   void setLoraBaud(eModuleBaud_t baud);
 
 /**
  * @fn getModuleBaud
  * @brief 获取模块的波特率
- * @return uint32_t 
+ * @return uint32_t 模块通信的波特率
  */
   uint32_t getModuleBaud(void);
 
 /**
  * @fn getModuleBaud
  * @brief 获取 接收lora的波特率
- * @return uint32_t 
+ * @return uint32_t lora通信的波特率
  */
   uint32_t getLoraBaud(void);
 
 /**
  * @fn get4gBaud
  * @brief 获取4g模块的波特率
- * @return uint32_t 
+ * @return uint32_t 4g通信的波特率
  */
   uint32_t get4gBaud(void);
 
 /**
  * @fn setUserName
  * @brief 设置用户名
- * @param name 
- * @param len 
+ * @param name 用户名 例如："chw123456789"
+ * @param len 用户名的长度
  */
   void setUserName(const char *name, uint8_t len);
 
 /**
  * @fn setUserName
  * @brief 设置密码
- * @param password 
- * @param len 
+ * @param password 密码 例如: "12345678"
+ * @param len 密码的长度
  */
   void setUserPassword(const char *password, uint8_t len);
 
 /** 
  * @fn setServerAddr
  * @brief 设置服务器地址
- * @param addr 
- * @param len 
+ * @param addr 服务器ip地址 例如："192.168.1.1"
+ * @param len 地址的长度
  */
   void setServerAddr(const char *addr, uint8_t len);
 
 /**
  * @fn setServerAddr
  * @brief 设置挂载点
- * @param point 
- * @param len 
+ * @param point 挂载点 例如："RTCM33"
+ * @param len 挂载点的长度
  */
   void setMountPoint(const char *point, uint8_t len);
 
 /**
  * @fn setPort
  * @brief 设置端口号
- * @param port 
+ * @param port 端口号 例如：8002
  */
   void setPort(uint16_t port);
 
