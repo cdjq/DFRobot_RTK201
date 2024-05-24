@@ -59,7 +59,6 @@ void setup()
   rtk.setMountPoint(MOUNT_POINT, strlen(MOUNT_POINT));
   rtk.setPort(port);
   Serial.println("please wait 4g module init!");
-  delay(5000);
   Serial.println("connecting network please wait !");
   result = rtk.connect();
   if((String)CONNECT_SUCCESS == result){

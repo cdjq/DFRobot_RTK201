@@ -401,9 +401,8 @@ void DFRobot_RTK201::getAllGnss(void)
 {
   uint8_t _sendData[300] = {0};
   uint16_t len = getGnssLen();
-  if(len > MAX_LEN){
-    return;
-  }
+  uint16_t old_len = len;
+  
   uint16_t i = 0;
   if(uartI2CFlag == UART_FLAG) {
     uint8_t templen = len / 250;
@@ -413,14 +412,18 @@ void DFRobot_RTK201::getAllGnss(void)
     for(uint16_t i = 0; i < templen; i++){
       if(i == (uint16_t)(templen - 1)){
         readReg(REG_ALL, _sendData, len%250);
-        if(callback){
-          callback((char *)_sendData, (uint8_t)(len%250));
+        if(old_len < MAX_LEN){
+          if(callback){
+            callback((char *)_sendData, (uint8_t)(len%250));
+          }
         }
         return;
       }else{
         readReg(REG_ALL, _sendData, 250);
-        if(callback){
-          callback((char *)_sendData, (uint8_t)250);
+        if(old_len < MAX_LEN){
+          if(callback){
+            callback((char *)_sendData, (uint8_t)250);
+          }
         }
       }
     }
@@ -433,16 +436,20 @@ void DFRobot_RTK201::getAllGnss(void)
         readReg(REG_ALL, _sendData, (uint8_t)32);
         len -= 32;
         i += 32;
-        if(callback){
-          callback((char *)_sendData, (uint8_t)32);
+        if(old_len < MAX_LEN){
+          if(callback){
+            callback((char *)_sendData, (uint8_t)32);
+          }
         }
       }else{
         _sendData[0] = i>>8;
         _sendData[1] = i;
         writeReg(REG_ALL_LEN_H, _sendData, 2);
         readReg(REG_ALL, _sendData, (uint8_t)len);
-        if(callback){
-          callback((char *)_sendData, (uint8_t)len);
+        if(old_len < MAX_LEN){
+          if(callback){
+            callback((char *)_sendData, (uint8_t)len);
+          }
         }
         len = 0;
       }
@@ -497,6 +504,13 @@ String DFRobot_RTK201::connect(void)
 {
   String result = CONNECT_ERROR;
   uint8_t _sendData[TEMP_LEN]  = {0xaa};
+
+/*
+  if(getConnectState() == true){
+    result = CONNECT_SUCCESS;
+    return result;
+  }
+*/
   writeReg(REG_CONNECT, _sendData, 1);
   delay(500);
   
